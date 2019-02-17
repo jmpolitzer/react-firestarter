@@ -15,15 +15,9 @@ npm install --save react-firestarter
 ```jsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-firestarter'
+import { FirestoreProvider, FirestoreContext } from 'react-firestarter'
 
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
+...
 ```
 
 ## License
