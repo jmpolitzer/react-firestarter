@@ -58,7 +58,5 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "firebase": "^5.8.3"
-  }
+  "dependencies": {}
 }

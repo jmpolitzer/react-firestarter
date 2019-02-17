@@ -1,5 +1,19 @@
-import 'firebase/firestore';
+import React from 'react';
 
-import { firebase } from '../init';
+const FirestoreContext = React.createContext();
 
-const fireStore = firebase.firestore();
+function FirestoreProvider(props) {
+  const { fireStore, children } = props;
+
+  return (
+    <FirestoreContext.Provider
+      value={{
+        data: () => console.log("we're connected to firestore!", fireStore)
+      }}
+    >
+      {children}
+    </FirestoreContext.Provider>
+  );
+}
+
+export { FirestoreContext, FirestoreProvider };

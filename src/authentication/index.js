@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import 'firebase/auth';
-import { firebase } from '../init';
 
-const fireAuth = firebase.auth();
 const AuthContext = React.createContext();
 
 /*
@@ -16,7 +13,7 @@ const AuthContext = React.createContext();
 */
 
 function AuthProvider(props) {
-  const { children, handleMessage } = props;
+  const { fireAuth, children, handleMessage } = props;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);

@@ -1,8 +1,9 @@
-import { fireInit } from '../init';
-import { AuthContext, AuthProvider } from '../authentication';
+import { AuthContext, AuthProvider } from './authentication';
+import { FirestoreContext, FirestoreProvider } from './firestore';
 
-export default firestarter = {
-  fireInit,
+export {
   AuthContext,
-  AuthProvider
+  AuthProvider,
+  FirestoreContext,
+  FirestoreProvider
 };
