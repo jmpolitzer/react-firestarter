@@ -4,6 +4,8 @@
 
 [![NPM](https://img.shields.io/npm/v/react-firestarter.svg)](https://www.npmjs.com/package/react-firestarter) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## WIP - DO NOT USE!
+
 ## Install
 
 ```bash
