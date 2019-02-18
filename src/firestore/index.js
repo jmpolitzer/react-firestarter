@@ -5,25 +5,25 @@ const FirestoreContext = React.createContext();
 function FirestoreProvider(props) {
   const { fireStore, children } = props;
 
-  const add = (collection, model) = {
+  const add = async (collection, model) => {
 
   };
 
-  const delete = (collection, id) = {
+  const remove = async (collection, id) => {
 
-  }
+  };
 
-  const update = (collection, id) = {
+  const update = async (collection, id) => {
 
-  }
+  };
 
-  const get = (collection, id) = {
+  const get = async (collection, id) => {
 
-  }
+  };
 
-  const getAll = (collection, queries) = {
-    
-  }
+  const getAll = async (collection, queries) => {
+
+  };
 
   return (
     <FirestoreContext.Provider
