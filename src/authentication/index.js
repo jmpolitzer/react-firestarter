@@ -4,6 +4,7 @@ const AuthContext = React.createContext();
 
 /*
   TODO:
+    - save user separately upon signup
     - update email address
     - update password
     - update user's profile

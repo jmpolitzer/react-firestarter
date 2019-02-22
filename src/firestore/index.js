@@ -2,6 +2,7 @@ import React from 'react';
 
 /*
   TODO:
+  - Add hook to manage isSubmitting state.
   - Add option to enable offline data - https://cloud.google.com/firestore/docs/manage-data/enable-offline
   - Implement arrayUnion and arrayRemove for updating array values.
   - Add realtime updates option.
@@ -16,13 +17,13 @@ function FirestoreProvider(props) {
   const { fireStore, children } = props;
   const db = fireStore;
 
-  const add = async (collection, values) => {
+  const add = async (collection, values, next) => {
     try {
       const docRef = await db.collection(collection).add(values);
 
-      if (docRef) handleFireStoreMessage('success', `Document added with id: ${docRef.id}.`);
+      next(docRef.id);
     } catch (error) {
-      handleFireStoreMessage('error', `Error adding document: ${error}.`);
+      handleFireStoreMessage('error', `Error adding document: ${error}.`, next);
     }
   };
 
@@ -76,8 +77,8 @@ function FirestoreProvider(props) {
     }
   };
 
-  const handleFireStoreMessage = (type, msg) => {
-    console.log(type, msg);
+  const handleFireStoreMessage = (type, message, next) => {
+    if (next) next({ type, message });
   };
 
   return (
