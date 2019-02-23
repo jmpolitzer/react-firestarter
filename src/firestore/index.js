@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 /*
   TODO:
-  - Add hook to manage isSubmitting state.
+  - Add hook to manage isRequesting state.
   - Add option to enable offline data - https://cloud.google.com/firestore/docs/manage-data/enable-offline
   - Implement arrayUnion and arrayRemove for updating array values.
   - Add realtime updates option.
@@ -15,13 +15,17 @@ const FirestoreContext = React.createContext();
 
 function FirestoreProvider(props) {
   const { fireStore, children } = props;
+  const [isRequesting, setIsRequesting] = useState(false);
   const db = fireStore;
 
   const add = async (collection, values, next) => {
+    setIsRequesting(true);
+
     try {
       const docRef = await db.collection(collection).add(values);
 
       next(docRef.id);
+      setIsRequesting(false);
     } catch (error) {
       handleFireStoreMessage('error', `Error adding document: ${error}.`, next);
     }
@@ -29,7 +33,7 @@ function FirestoreProvider(props) {
 
   const remove = async (collection, id) => {
     try {
-      const docRef = db.collection(collection).doc(id);
+      const docRef = await db.collection(collection).doc(id);
       const deleted = docRef.delete();
 
       if (deleted) handleFireStoreMessage('success', 'Document successfully deleted.');
@@ -40,7 +44,7 @@ function FirestoreProvider(props) {
 
   const update = async (collection, id, values) => {
     try {
-      const docRef = db.collection(collection).doc(id);
+      const docRef = await db.collection(collection).doc(id);
       const updated = docRef.update({
         ...values,
         updatedAt: db.FieldValue.serverTimestamp()
@@ -54,7 +58,7 @@ function FirestoreProvider(props) {
 
   const get = async (collection, id) => {
     try {
-      const docRef = db.collection(collection).doc(id);
+      const docRef = await db.collection(collection).doc(id);
       const doc = docRef.get();
 
       if (doc.exists) {
@@ -67,17 +71,23 @@ function FirestoreProvider(props) {
     }
   };
 
-  const getAll = async (collection) => {
+  const getAll = async (collection, next) => {
     try {
-      const querySnapshot = db.collection(collection).get();
+      const querySnapshot = await db.collection(collection).get();
 
-      return querySnapshot.map(doc => doc.data());
+      next(querySnapshot.docs.map(doc => {
+        const data = doc.data();
+
+        return { id: doc.id, ...data };
+      }));
     } catch (error) {
-      handleFireStoreMessage('error', `Error getting documents: ${error}.`);
+      handleFireStoreMessage('error', `Error getting documents: ${error}.`, next);
     }
   };
 
   const handleFireStoreMessage = (type, message, next) => {
+    setIsRequesting(false);
+
     if (next) next({ type, message });
   };
 
@@ -88,7 +98,8 @@ function FirestoreProvider(props) {
         remove: remove,
         update: update,
         get: get,
-        getAll: getAll
+        getAll: getAll,
+        isRequesting
       }}
     >
       {children}
