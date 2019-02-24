@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 import Collection from './Collection';
+import Document from './Document';
 
 /*
   TODO:
-  - Add hook to manage isRequesting state.
   - Add option to enable offline data - https://cloud.google.com/firestore/docs/manage-data/enable-offline
   - Implement arrayUnion and arrayRemove for updating array values.
   - Add realtime updates option.
@@ -20,16 +20,16 @@ function FirestoreProvider(props) {
   const [isRequesting, setIsRequesting] = useState(false);
   const db = firestore;
 
-  const add = async (collection, values, next) => {
+  const add = async (collection, values, onSuccess, onError) => {
     setIsRequesting(true);
 
     try {
       const docRef = await db.collection(collection).add(values);
 
-      next(docRef.id);
+      if (onSuccess) onSuccess(docRef.id);
       setIsRequesting(false);
     } catch (error) {
-      handleFireStoreMessage('error', `Error adding document: ${error}.`, next);
+      handleError(onError, `Error adding document: ${error}.`);
     }
   };
 
@@ -93,16 +93,19 @@ function FirestoreProvider(props) {
     if (next) next({ type, message });
   };
 
+  const handleError = (onError, message) => {
+    setIsRequesting(false);
+
+    if (onError) onError(message);
+  };
+
+  const crud = { add, remove, update, get };
+
   return (
     <FirestoreContext.Provider
       value={{
-        add: add,
-        remove: remove,
-        update: update,
-        get: get,
-        getAll: getAll,
-        isRequesting,
-        Collection: (props) => <Collection {...props} firestore={firestore} />
+        Collection: (props) => <Collection {...props} firestore={firestore} />,
+        Document: (props) => <Document {...props} {...crud} isRequesting={isRequesting} />
       }}
     >
       {children}
