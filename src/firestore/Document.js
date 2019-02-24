@@ -5,6 +5,7 @@ function Document(props) {
     children,
     onSuccess,
     onError,
+    id,
     name,
     add,
     remove,
@@ -17,9 +18,13 @@ function Document(props) {
      add(name, values, onSuccess, onError);
    }
 
+   const removeDocument = () => {
+     remove(name, id, onSuccess, onError);
+   }
+
   return children({
     add: addDocument,
-    remove,
+    remove: removeDocument,
     update,
     get,
     isRequesting

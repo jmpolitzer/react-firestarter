@@ -26,21 +26,20 @@ function FirestoreProvider(props) {
     try {
       const docRef = await db.collection(collection).add(values);
 
-      if (onSuccess) onSuccess(docRef.id);
-      setIsRequesting(false);
+      handleCallback(onSuccess, 'add', docRef.id);
     } catch (error) {
-      handleError(onError, `Error adding document: ${error}.`);
+      handleCallback(onError, 'add', `Error adding document: ${error}.`);
     }
   };
 
-  const remove = async (collection, id) => {
+  const remove = async (collection, id, onSuccess, onError) => {
     try {
       const docRef = await db.collection(collection).doc(id);
-      const deleted = docRef.delete();
+      docRef.delete();
 
-      if (deleted) handleFireStoreMessage('success', 'Document successfully deleted.');
+      handleCallback(onSuccess, 'delete', 'Document successfully deleted.');
     } catch (error) {
-      handleFireStoreMessage('error', `Error deleting document: ${error}.`);
+      handleCallback(onError, 'delete', `Error deleting document: ${error}.`);
     }
   };
 
@@ -93,10 +92,10 @@ function FirestoreProvider(props) {
     if (next) next({ type, message });
   };
 
-  const handleError = (onError, message) => {
+  const handleCallback = (callback, action, result) => {
     setIsRequesting(false);
 
-    if (onError) onError(message);
+    if (callback) callback({ action, result });
   };
 
   const crud = { add, remove, update, get };
