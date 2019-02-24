@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import Collection from './Collection';
+
 /*
   TODO:
   - Add hook to manage isRequesting state.
@@ -14,9 +16,9 @@ import React, { useState } from 'react';
 const FirestoreContext = React.createContext();
 
 function FirestoreProvider(props) {
-  const { fireStore, children } = props;
+  const { firestore, children } = props;
   const [isRequesting, setIsRequesting] = useState(false);
-  const db = fireStore;
+  const db = firestore;
 
   const add = async (collection, values, next) => {
     setIsRequesting(true);
@@ -99,7 +101,8 @@ function FirestoreProvider(props) {
         update: update,
         get: get,
         getAll: getAll,
-        isRequesting
+        isRequesting,
+        Collection: (props) => <Collection {...props} firestore={firestore} />
       }}
     >
       {children}
