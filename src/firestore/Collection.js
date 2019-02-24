@@ -13,14 +13,14 @@ function Collection(props) {
     */
     const unsubscribe = db.collection(name)
       .onSnapshot(querySnapshot => {
-        const documents = querySnapshot.docs.map(doc => {
+        const _documents = querySnapshot.docs.map(doc => {
           const data = doc.data();
 
           return { id: doc.id, ...data };
         });
 
         setIsLoading(false);
-        setDocuments(documents);
+        setDocuments(_documents);
       });
 
     return function cleanup() {

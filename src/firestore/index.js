@@ -43,35 +43,33 @@ function FirestoreProvider(props) {
     }
   };
 
-  const update = async (collection, id, values) => {
+  const update = async (collection, id, values, onSuccess, onError) => {
     try {
       const docRef = await db.collection(collection).doc(id);
-      const updated = docRef.update({
-        ...values,
-        updatedAt: db.FieldValue.serverTimestamp()
-      });
+      docRef.update(values);
 
-      if (updated) handleFireStoreMessage('success', 'Document successfully updated.');
+      handleCallback(onSuccess, 'update', 'Document successfully updated.');
     } catch (error) {
-      handleFireStoreMessage('error', `Error updating document: ${error}.`);
+      handleCallback(onError, 'update', `Error updating document: ${error}.`);
     }
   };
 
-  const get = async (collection, id) => {
+  const get = async (collection, id, onSuccess, onError) => {
     try {
       const docRef = await db.collection(collection).doc(id);
-      const doc = docRef.get();
+      const doc = await docRef.get();
 
       if (doc.exists) {
-        return doc.data();
+        handleCallback(onSuccess, 'get', doc.data());
       } else {
-        handleFireStoreMessage('success', 'No such document.')
+        handleCallback(onSuccess, 'get', 'No such document.')
       }
     } catch (error) {
-      handleFireStoreMessage('error', `Error getting document: ${error}.`);
+      handleCallback(onError, 'get', `Error getting document: ${error}.`);
     }
   };
 
+  /* Re-implement this to be consistent with methods above. */ 
   const getAll = async (collection, next) => {
     try {
       const querySnapshot = await db.collection(collection).get();
@@ -82,14 +80,8 @@ function FirestoreProvider(props) {
         return { id: doc.id, ...data };
       }));
     } catch (error) {
-      handleFireStoreMessage('error', `Error getting documents: ${error}.`, next);
+      handleCallback('error', `Error getting documents: ${error}.`, next);
     }
-  };
-
-  const handleFireStoreMessage = (type, message, next) => {
-    setIsRequesting(false);
-
-    if (next) next({ type, message });
   };
 
   const handleCallback = (callback, action, result) => {
