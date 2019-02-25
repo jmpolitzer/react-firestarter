@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import FirestoreContext from './context';
 
 function Collection(props) {
-  const { firestore, children, name } = props;
+  const { children, name } = props;
+  const { firestore } = useContext(FirestoreContext);
   const [documents, setDocuments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const db = firestore;

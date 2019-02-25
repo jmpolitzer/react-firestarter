@@ -1,9 +1,10 @@
 import { AuthContext, AuthProvider } from './authentication';
-import { FirestoreContext, FirestoreProvider } from './firestore';
+import { FirestoreProvider, Collection, Document } from './firestore';
 
 export {
   AuthContext,
   AuthProvider,
-  FirestoreContext,
-  FirestoreProvider
+  FirestoreProvider,
+  Collection,
+  Document
 };

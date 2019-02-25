@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import FirestoreContext from './context';
 
 function Document(props) {
   const {
@@ -6,14 +7,10 @@ function Document(props) {
     name,
     id,
     onSuccess,
-    onError,
-    add,
-    remove,
-    update,
-    get,
-    isRequesting
+    onError
    } = props;
 
+   const { add, remove, update, get, isRequesting } = useContext(FirestoreContext);
    const [doc, setDocument] = useState(null);
 
    const addDocument = values => {
