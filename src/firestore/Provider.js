@@ -65,18 +65,19 @@ function FirestoreProvider(props) {
     }
   };
 
-  /* Re-implement this to be consistent with methods above. */
-  const getAll = async (collection, next) => {
+  const getAll = async (collection, onSuccess, onError) => {
     try {
       const querySnapshot = await db.collection(collection).get();
 
-      next(querySnapshot.docs.map(doc => {
+      const _collection = querySnapshot.docs.map(doc => {
         const data = doc.data();
 
         return { id: doc.id, ...data };
-      }));
+      });
+
+      handleCallback(onSuccess, 'getAll', _collection);
     } catch (error) {
-      handleCallback('error', `Error getting documents: ${error}.`, next);
+      handleCallback('error', `Error getting documents: ${error}.`);
     }
   };
 
