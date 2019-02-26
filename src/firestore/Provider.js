@@ -5,7 +5,6 @@ import FirestoreContext from './context';
   TODO:
   - Add option to enable offline data - https://cloud.google.com/firestore/docs/manage-data/enable-offline
   - Implement arrayUnion and arrayRemove for updating array values.
-  - Add realtime updates option.
   - Add support for simple and compound queries.
   - Add support for ordering and limiting data.
   - Add support for pagination and query cursors.
