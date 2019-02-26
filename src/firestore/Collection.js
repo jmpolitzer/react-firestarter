@@ -19,7 +19,6 @@ function Collection(props) {
       /* Question: Is it useful to check for type of update - added, updated, removed? */
       const unsubscribe = db.collection(name)
       .onSnapshot(querySnapshot => {
-        console.log('realtime update');
         const _documents = querySnapshot.docs.map(doc => {
           const data = doc.data();
 

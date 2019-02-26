@@ -7,11 +7,13 @@ function Document(props) {
     name,
     id,
     onSuccess,
-    onError
+    onError,
+    realtime = false
    } = props;
 
-   const { add, remove, update, get, isRequesting } = useContext(FirestoreContext);
+   const { firestore, add, remove, update, get, isRequesting } = useContext(FirestoreContext);
    const [doc, setDocument] = useState(null);
+   const db = firestore;
 
    const addDocument = values => {
      add(name, values, onSuccess, onError);
@@ -27,13 +29,26 @@ function Document(props) {
 
    useEffect(() => {
      if (id) {
-       get(name, id, ({ result: _doc }) => {
-         setDocument(_doc);
-       }, error => {
-         console.log(error);
-       });
+       if (realtime) {
+         const unsubscribe = db.collection(name).doc(id)
+         .onSnapshot(doc => {
+           const _doc = doc.data();
+
+           setDocument(_doc);
+         });
+
+         return function cleanup() {
+           unsubscribe();
+         }
+       } else {
+         get(name, id, ({ result: _doc }) => {
+           setDocument(_doc);
+         }, error => {
+           console.log(error);
+         });
+       }
      }
-   },{});
+   }, {});
 
   return children({
     add: addDocument,
