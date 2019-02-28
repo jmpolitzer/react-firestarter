@@ -8,7 +8,6 @@ function Collection(props) {
     realtime = true
   } = props;
 
-  console.log(useContext(FirestoreContext));
   const { firestore, getAll } = useContext(FirestoreContext);
   const [documents, setDocuments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
