@@ -18,4 +18,10 @@ describe('Firestore Collection', () => {
     expect(getByTestId('todos-container').children.length).toBe(2);
     expect(queryByTestId('loading')).not.toBeInTheDocument();
   });
+
+  it('defaults to using realtime snapshots', () => {
+    const { getByTestId, queryByTestId } = render(<MockCollection />);
+
+    expect(getByTestId('todos-container').children.length).toBe(2);
+  });
 });

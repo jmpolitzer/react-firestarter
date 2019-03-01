@@ -15,7 +15,11 @@ const mockFirestore = {
   name: 'firestore',
   collection: (collection) => ({
     add: (values) => (Promise.resolve(values)),
-    get: () => (Promise.resolve(mockDocuments))
+    get: () => (Promise.resolve(mockDocuments)),
+    onSnapshot: (cb) => {
+      cb(mockDocuments)
+      return () => {};
+    }
   })
 };
 
