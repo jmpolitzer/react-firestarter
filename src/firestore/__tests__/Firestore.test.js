@@ -44,9 +44,7 @@ describe('Firestore Collection', () => {
   });
 
   it('returns an error if there is a problem getting all documents', async () => {
-    const { getByText } = render(
-      <MockCollection error realtime={false} onError={mockOnError} />
-    );
+    render(<MockCollection error realtime={false} onError={mockOnError} />);
 
     await wait(() => {});
 
@@ -182,7 +180,7 @@ describe('Firestore Document', async () => {
   });
 
   it('returns an error if there is a problem getting a document', async () => {
-    const { getByText } = render(
+    render(
       <MockDocument
         error
         id={987654}

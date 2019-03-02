@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import FirestoreContext from './context';
 
 /*
@@ -26,7 +26,7 @@ function FirestoreProvider(props) {
 
   const remove = async (collection, id, onSuccess, onError) => {
     try {
-      const docRef = await db
+      await db
         .collection(collection)
         .doc(id)
         .delete();
@@ -43,7 +43,7 @@ function FirestoreProvider(props) {
 
   const update = async (collection, id, values, onSuccess, onError) => {
     try {
-      const docRef = await db
+      await db
         .collection(collection)
         .doc(id)
         .update(values);
@@ -89,11 +89,9 @@ function FirestoreProvider(props) {
     }
   };
 
-  const handleCallback = (callback, action, result) => {
-    callback({ action, result });
+  const handleCallback = (next, action, result) => {
+    next({ action, result });
   };
-
-  const crud = { add, remove, update, get };
 
   return (
     <FirestoreContext.Provider
