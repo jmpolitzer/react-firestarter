@@ -1,9 +1,10 @@
 import React from 'react';
-import { cleanup, render, waitForElement } from 'react-testing-library';
+import { cleanup, fireEvent, render, wait, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
 import mockFirestore from '../mocks/mockFirestore';
-import MockCollection from '../mocks/mockCollection'
+import MockCollection from '../mocks/mockCollection';
+import MockDocument from '../mocks/mockDocument';
 
 afterEach(cleanup);
 
@@ -20,8 +21,25 @@ describe('Firestore Collection', () => {
   });
 
   it('defaults to using realtime snapshots', () => {
-    const { getByTestId, queryByTestId } = render(<MockCollection />);
+    const { getByTestId } = render(<MockCollection />);
 
     expect(getByTestId('todos-container').children.length).toBe(2);
+  });
+});
+
+describe('Firestore Document', async () => {
+  const mockOnSuccess = jest.fn();
+  const mockOnError = jest.fn();
+
+  it('successfully adds a document', async () => {
+    const { getByText } = render(<MockDocument onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => fireEvent.click(getByText('Add')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('add');
+    expect(mockCalls[0][0].result).toBe(123456);
   });
 });

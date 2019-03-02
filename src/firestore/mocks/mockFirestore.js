@@ -2,11 +2,11 @@ const mockDocuments = {
   docs: [
     {
       data: () => ({ text: 'first todo' }),
-      id: 1
+      id: 123456
     },
     {
       data: () => ({ text: 'second todo' }),
-      id: 2
+      id: 654321
     }
   ]
 };
@@ -14,7 +14,7 @@ const mockDocuments = {
 const mockFirestore = {
   name: 'firestore',
   collection: (collection) => ({
-    add: (values) => (Promise.resolve(values)),
+    add: () => (Promise.resolve(mockDocuments.docs[0])),
     get: () => (Promise.resolve(mockDocuments)),
     onSnapshot: (cb) => {
       cb(mockDocuments)
