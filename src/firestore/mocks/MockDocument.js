@@ -14,7 +14,7 @@ function MockDocument({ id, onSuccess, onError }) {
           <Fragment>
             <button onClick={add}>Add</button>
             <button onClick={remove}>Remove</button>
-            <button onClick={update}>Edit</button>
+            <button onClick={update}>Update</button>
           </Fragment>
         )}
       </Document>

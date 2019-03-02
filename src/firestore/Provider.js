@@ -43,7 +43,7 @@ function FirestoreProvider(props) {
       const docRef = await db.collection(collection).doc(id);
       docRef.update(values);
 
-      handleCallback(onSuccess, 'update', 'Document successfully updated.');
+      handleCallback(onSuccess, 'update', `Document ${id} successfully updated.`);
     } catch (error) {
       handleCallback(onError, 'update', `Error updating document: ${error}.`);
     }

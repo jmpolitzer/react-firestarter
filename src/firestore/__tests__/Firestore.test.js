@@ -59,4 +59,16 @@ describe('Firestore Document', async () => {
     expect(mockCalls[0][0].action).toBe('delete');
     expect(mockCalls[0][0].result).toBe('Document 654321 successfully deleted.');
   });
+
+  it('successfully updates a document', async () => {
+    const { getByText } = render(<MockDocument id={654321} onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => fireEvent.click(getByText('Update')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update');
+    expect(mockCalls[0][0].result).toBe('Document 654321 successfully updated.');
+  });
 });
