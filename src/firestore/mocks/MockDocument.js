@@ -6,18 +6,24 @@ import { FirestoreProvider, Document } from '../index';
 function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
   return (
     <FirestoreProvider firestore={error ? mockFirestoreError : mockFirestore}>
-      <Document name="todos"
-                id={id}
-                fetch={fetch}
-                realtime={realtime}
-                onSuccess={onSuccess}
-                onError={onError}>
+      <Document
+        name="todos"
+        id={id}
+        fetch={fetch}
+        realtime={realtime}
+        onSuccess={onSuccess}
+        onError={onError}
+      >
         {({ add, remove, update, doc, isLoading }) => {
           if (isLoading) {
             return <div>Loading</div>;
           } else {
             if (doc) {
-              return <div data-testid="todo-item">{typeof doc === 'string' ? doc : doc.text}</div>;
+              return (
+                <div data-testid="todo-item">
+                  {typeof doc === 'string' ? doc : doc.text}
+                </div>
+              );
             } else {
               return (
                 <Fragment>
@@ -31,7 +37,7 @@ function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
         }}
       </Document>
     </FirestoreProvider>
-  )
+  );
 }
 
 export default MockDocument;

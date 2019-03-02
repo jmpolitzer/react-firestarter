@@ -17,7 +17,7 @@ function MockCollection({ error, realtime, onError }) {
                   <div key={i}>{todo.text}</div>
                 ))}
               </div>
-            )
+            );
           }
         }}
       </Collection>

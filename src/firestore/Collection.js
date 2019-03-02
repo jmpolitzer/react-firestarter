@@ -2,12 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import FirestoreContext from './context';
 
 function Collection(props) {
-  const {
-    children,
-    name,
-    onError,
-    realtime = true
-  } = props;
+  const { children, name, onError, realtime = true } = props;
 
   const { firestore, getAll } = useContext(FirestoreContext);
   const [documents, setDocuments] = useState([]);
@@ -19,8 +14,7 @@ function Collection(props) {
     /* TODO: Handle Queries. */
     if (realtime) {
       /* Question: Is it useful to check for type of update - added, updated, removed? */
-      const unsubscribe = db.collection(name)
-      .onSnapshot(querySnapshot => {
+      const unsubscribe = db.collection(name).onSnapshot(querySnapshot => {
         const _documents = querySnapshot.docs.map(doc => {
           const data = doc.data();
 
@@ -33,14 +27,18 @@ function Collection(props) {
 
       return function cleanup() {
         unsubscribe();
-      }
+      };
     } else {
-      getAll(name, ({ result: _documents }) => {
-        setIsLoading(false);
-        setDocuments(_documents);
-      }, error => {
-        onError(error);
-      });
+      getAll(
+        name,
+        ({ result: _documents }) => {
+          setIsLoading(false);
+          setDocuments(_documents);
+        },
+        error => {
+          onError(error);
+        }
+      );
     }
   }, []);
 
@@ -48,6 +46,6 @@ function Collection(props) {
     isLoading,
     [name]: documents
   });
-};
+}
 
 export default Collection;
