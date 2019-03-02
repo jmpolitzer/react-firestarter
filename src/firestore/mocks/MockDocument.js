@@ -3,10 +3,11 @@ import React, { Fragment } from 'react';
 import mockFirestore from './mockFirestore';
 import { FirestoreProvider, Document } from '../index';
 
-function MockDocument({ onSuccess, onError }) {
+function MockDocument({ id, onSuccess, onError }) {
   return (
     <FirestoreProvider firestore={mockFirestore}>
       <Document name="todos"
+                id={id}
                 onSuccess={onSuccess}
                 onError={onError}>
         {({ add, remove, update, doc, isRequesting }) => (

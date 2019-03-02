@@ -6,7 +6,15 @@ import mockFirestore from '../mocks/mockFirestore';
 import MockCollection from '../mocks/mockCollection';
 import MockDocument from '../mocks/mockDocument';
 
-afterEach(cleanup);
+const mockOnSuccess = jest.fn();
+const mockOnError = jest.fn();
+
+afterEach(() => {
+  cleanup();
+
+  mockOnSuccess.mockClear();
+  mockOnError.mockClear();
+});
 
 describe('Firestore Collection', () => {
   it('renders a toggleable loading indicator and a collection of documents', async () => {
@@ -28,9 +36,6 @@ describe('Firestore Collection', () => {
 });
 
 describe('Firestore Document', async () => {
-  const mockOnSuccess = jest.fn();
-  const mockOnError = jest.fn();
-
   it('successfully adds a document', async () => {
     const { getByText } = render(<MockDocument onSuccess={mockOnSuccess} onError={mockOnError} />);
 
@@ -41,5 +46,17 @@ describe('Firestore Document', async () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('add');
     expect(mockCalls[0][0].result).toBe(123456);
+  });
+
+  it('successfully removes a document', async () => {
+    const { getByText } = render(<MockDocument id={654321} onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => fireEvent.click(getByText('Remove')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('delete');
+    expect(mockCalls[0][0].result).toBe('Document 654321 successfully deleted.');
   });
 });

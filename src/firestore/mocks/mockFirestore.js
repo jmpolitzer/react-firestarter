@@ -16,6 +16,9 @@ const mockFirestore = {
   collection: (collection) => ({
     add: () => (Promise.resolve(mockDocuments.docs[0])),
     get: () => (Promise.resolve(mockDocuments)),
+    doc: () => ({
+      delete: () => (Promise.resolve())
+    }),
     onSnapshot: (cb) => {
       cb(mockDocuments)
       return () => {};

@@ -32,7 +32,7 @@ function FirestoreProvider(props) {
       const docRef = await db.collection(collection).doc(id);
       docRef.delete();
 
-      handleCallback(onSuccess, 'delete', 'Document successfully deleted.');
+      handleCallback(onSuccess, 'delete', `Document ${id} successfully deleted.`);
     } catch (error) {
       handleCallback(onError, 'delete', `Error deleting document: ${error}.`);
     }

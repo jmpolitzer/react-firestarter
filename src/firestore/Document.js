@@ -8,7 +8,8 @@ function Document(props) {
     id,
     onSuccess,
     onError,
-    realtime = false
+    realtime = false,
+    fetch = false /* TODO: Test fetch prop. */
    } = props;
 
    const { firestore, add, remove, update, get, isRequesting } = useContext(FirestoreContext);
@@ -28,7 +29,7 @@ function Document(props) {
    }
 
    useEffect(() => {
-     if (id) {
+     if (id && fetch) {
        if (realtime) {
          const unsubscribe = db.collection(name).doc(id)
          .onSnapshot(doc => {
