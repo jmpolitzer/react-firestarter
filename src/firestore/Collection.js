@@ -5,6 +5,7 @@ function Collection(props) {
   const {
     children,
     name,
+    onError,
     realtime = true
   } = props;
 
@@ -38,7 +39,7 @@ function Collection(props) {
         setIsLoading(false);
         setDocuments(_documents);
       }, error => {
-        console.log(error);
+        onError(error);
       });
     }
   }, []);

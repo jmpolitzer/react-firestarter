@@ -26,8 +26,7 @@ function FirestoreProvider(props) {
 
   const remove = async (collection, id, onSuccess, onError) => {
     try {
-      const docRef = await db.collection(collection).doc(id);
-      docRef.delete();
+      const docRef = await db.collection(collection).doc(id).delete();
 
       handleCallback(onSuccess, 'delete', `Document ${id} successfully deleted.`);
     } catch (error) {
@@ -37,8 +36,7 @@ function FirestoreProvider(props) {
 
   const update = async (collection, id, values, onSuccess, onError) => {
     try {
-      const docRef = await db.collection(collection).doc(id);
-      docRef.update(values);
+      const docRef = await db.collection(collection).doc(id).update(values);
 
       handleCallback(onSuccess, 'update', `Document ${id} successfully updated.`);
     } catch (error) {
@@ -73,12 +71,12 @@ function FirestoreProvider(props) {
 
       handleCallback(onSuccess, 'getAll', _collection);
     } catch (error) {
-      handleCallback('error', `Error getting documents: ${error}.`);
+      handleCallback(onError, 'getAll', `Error getting documents: ${error}.`);
     }
   };
 
   const handleCallback = (callback, action, result) => {
-    if (callback) callback({ action, result });
+    callback({ action, result });
   };
 
   const crud = { add, remove, update, get };

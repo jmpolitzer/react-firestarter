@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 
-import mockFirestore from './mockFirestore';
+import { mockFirestore, mockFirestoreError } from './mockFirestore';
 import { FirestoreProvider, Document } from '../index';
 
-function MockDocument({ id, fetch, realtime, onSuccess, onError }) {
+function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
   return (
-    <FirestoreProvider firestore={mockFirestore}>
+    <FirestoreProvider firestore={error ? mockFirestoreError : mockFirestore}>
       <Document name="todos"
                 id={id}
                 fetch={fetch}
@@ -17,7 +17,7 @@ function MockDocument({ id, fetch, realtime, onSuccess, onError }) {
             return <div>Loading</div>;
           } else {
             if (doc) {
-              return <div data-testid="todo-item">{doc.text}</div>;
+              return <div data-testid="todo-item">{typeof doc === 'string' ? doc : doc.text}</div>;
             } else {
               return (
                 <Fragment>

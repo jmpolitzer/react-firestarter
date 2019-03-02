@@ -2,7 +2,6 @@ import React from 'react';
 import { cleanup, fireEvent, render, wait, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
-import mockFirestore from '../mocks/mockFirestore';
 import MockCollection from '../mocks/mockCollection';
 import MockDocument from '../mocks/mockDocument';
 
@@ -35,6 +34,18 @@ describe('Firestore Collection', () => {
     expect(getByText('first todo')).toBeInTheDocument();
     expect(getByText('second todo')).toBeInTheDocument();
   });
+
+  it('returns an error if there is a problem getting all documents', async () => {
+    const { getByText } = render(<MockCollection error realtime={false} onError={mockOnError} />);
+
+    await wait(() => {});
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('getAll');
+    expect(mockCalls[0][0].result).toContain('Error getting documents');
+  });
 });
 
 describe('Firestore Document', async () => {
@@ -50,6 +61,18 @@ describe('Firestore Document', async () => {
     expect(mockCalls[0][0].result).toBe(123456);
   });
 
+  it('returns an error if there is a problem adding a document', async () => {
+    const { getByText } = render(<MockDocument error onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => fireEvent.click(getByText('Add')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('add');
+    expect(mockCalls[0][0].result).toContain('Error adding document');
+  });
+
   it('successfully removes a document', async () => {
     const { getByText } = render(<MockDocument id={654321} onSuccess={mockOnSuccess} onError={mockOnError} />);
 
@@ -60,6 +83,18 @@ describe('Firestore Document', async () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('delete');
     expect(mockCalls[0][0].result).toBe('Document 654321 successfully deleted.');
+  });
+
+  it('returns an error if there is a problem removing a document', async () => {
+    const { getByText } = render(<MockDocument error onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => fireEvent.click(getByText('Remove')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('delete');
+    expect(mockCalls[0][0].result).toContain('Error deleting document');
   });
 
   it('successfully updates a document', async () => {
@@ -74,6 +109,18 @@ describe('Firestore Document', async () => {
     expect(mockCalls[0][0].result).toBe('Document 654321 successfully updated.');
   });
 
+  it('returns an error if there is a problem updating a document', async () => {
+    const { getByText } = render(<MockDocument error onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => fireEvent.click(getByText('Update')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update');
+    expect(mockCalls[0][0].result).toContain('Error updating document');
+  });
+
   it('successfully gets a document on load if fetch prop is set to true', async () => {
     const { getByText, getByTestId, queryByText } = render(<MockDocument id={654321} fetch={true} />);
 
@@ -83,6 +130,29 @@ describe('Firestore Document', async () => {
 
     expect(getByTestId('todo-item')).toHaveTextContent('second todo');
     expect(queryByText('Loading')).not.toBeInTheDocument();
+  });
+
+  it('returns a descriptive message if no document exists', async () => {
+    const { getByText, getByTestId, queryByText } = render(<MockDocument id={987654} fetch={true} />);
+
+    expect(getByText('Loading')).toBeInTheDocument();
+
+    await waitForElement(() => getByTestId('todo-item'));
+
+    expect(getByTestId('todo-item')).toHaveTextContent('No such document.');
+    expect(queryByText('Loading')).not.toBeInTheDocument();
+  });
+
+  it('returns an error if there is a problem getting a document', async () => {
+    const { getByText } = render(<MockDocument error id={987654} fetch={true} onSuccess={mockOnSuccess} onError={mockOnError} />);
+
+    await wait(() => {});
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('get');
+    expect(mockCalls[0][0].result).toContain('Error getting document');
   });
 
   it('listens for document snapshots if fetch and realtime props are set to true', async () => {

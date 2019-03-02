@@ -14,14 +14,13 @@ const mockDocuments = {
 };
 
 const mockFirestore = {
-  name: 'firestore',
   collection: (collection) => ({
     add: () => (Promise.resolve(mockDocuments.docs[0])),
     get: () => (Promise.resolve(mockDocuments)),
     doc: (id) => ({
       delete: () => (Promise.resolve()),
       update: () => (Promise.resolve()),
-      get: () => (Promise.resolve(mockDocuments.docs.find(doc => doc.id === id))),
+      get: () => (Promise.resolve(mockDocuments.docs.find(doc => doc.id === id) || { exists: false })),
       onSnapshot: (cb) => {
         cb(mockDocuments.docs.find(doc => doc.id === id))
         return () => {};
@@ -34,4 +33,17 @@ const mockFirestore = {
   })
 };
 
-export default mockFirestore;
+const error = new Error();
+const mockFirestoreError = {
+  collection: (collection) => ({
+    add: () => (Promise.reject(error)),
+    get: () => (Promise.reject(error)),
+    doc: () => ({
+      delete: () => (Promise.reject(error)),
+      update: () => (Promise.reject(error)),
+      get: () => (Promise.reject(error))
+    }),
+  })
+};
+
+export { mockFirestore, mockFirestoreError };

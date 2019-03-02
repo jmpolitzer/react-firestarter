@@ -50,7 +50,7 @@ function Document(props) {
            setIsLoading(false);
            setDocument(_doc);
          }, error => {
-           console.log(error);
+           onError(error);
          });
        }
      }

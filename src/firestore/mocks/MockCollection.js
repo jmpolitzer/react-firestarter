@@ -1,12 +1,12 @@
 import React from 'react';
 
-import mockFirestore from './mockFirestore';
+import { mockFirestore, mockFirestoreError } from './mockFirestore';
 import { FirestoreProvider, Collection } from '../index';
 
-function MockCollection({ realtime }) {
+function MockCollection({ error, realtime, onError }) {
   return (
-    <FirestoreProvider firestore={mockFirestore}>
-      <Collection name="todos" realtime={realtime}>
+    <FirestoreProvider firestore={error ? mockFirestoreError : mockFirestore}>
+      <Collection name="todos" realtime={realtime} onError={onError}>
         {({ isLoading, todos }) => {
           if (isLoading) {
             return <div data-testid="loading">Loading</div>;
