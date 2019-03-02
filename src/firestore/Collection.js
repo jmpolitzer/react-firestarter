@@ -10,10 +10,11 @@ function Collection(props) {
 
   const { firestore, getAll } = useContext(FirestoreContext);
   const [documents, setDocuments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const db = firestore;
 
   useEffect(() => {
+    setIsLoading(true);
     /* TODO: Handle Queries. */
     if (realtime) {
       /* Question: Is it useful to check for type of update - added, updated, removed? */

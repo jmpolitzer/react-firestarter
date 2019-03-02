@@ -9,11 +9,12 @@ function Document(props) {
     onSuccess,
     onError,
     realtime = false,
-    fetch = false /* TODO: Test fetch prop. */
+    fetch = false
    } = props;
 
-   const { firestore, add, remove, update, get, isRequesting } = useContext(FirestoreContext);
+   const { firestore, add, remove, update, get } = useContext(FirestoreContext);
    const [doc, setDocument] = useState(null);
+   const [isLoading, setIsLoading] = useState(false);
    const db = firestore;
 
    const addDocument = values => {
@@ -30,11 +31,14 @@ function Document(props) {
 
    useEffect(() => {
      if (id && fetch) {
+       setIsLoading(true);
+
        if (realtime) {
          const unsubscribe = db.collection(name).doc(id)
          .onSnapshot(doc => {
            const _doc = doc.data();
 
+           setIsLoading(false);
            setDocument(_doc);
          });
 
@@ -43,20 +47,21 @@ function Document(props) {
          }
        } else {
          get(name, id, ({ result: _doc }) => {
+           setIsLoading(false);
            setDocument(_doc);
          }, error => {
            console.log(error);
          });
        }
      }
-   }, {});
+   }, []);
 
   return children({
     add: addDocument,
     remove: removeDocument,
     update: updateDocument,
     doc: doc,
-    isRequesting
+    isLoading
   });
 };
 

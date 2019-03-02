@@ -12,12 +12,9 @@ import FirestoreContext from './context';
 
 function FirestoreProvider(props) {
   const { firestore, children } = props;
-  const [isRequesting, setIsRequesting] = useState(false);
   const db = firestore;
 
   const add = async (collection, values, onSuccess, onError) => {
-    setIsRequesting(true);
-
     try {
       const docRef = await db.collection(collection).add(values);
 
@@ -81,8 +78,6 @@ function FirestoreProvider(props) {
   };
 
   const handleCallback = (callback, action, result) => {
-    setIsRequesting(false);
-
     if (callback) callback({ action, result });
   };
 
@@ -96,8 +91,7 @@ function FirestoreProvider(props) {
         remove,
         update,
         get,
-        getAll,
-        isRequesting
+        getAll
       }}
     >
       {children}

@@ -18,20 +18,22 @@ afterEach(() => {
 
 describe('Firestore Collection', () => {
   it('renders a toggleable loading indicator and a collection of documents', async () => {
-    const { getByTestId, queryByTestId } = render(<MockCollection realtime={false} />);
+    const { getByText, getByTestId, queryByText } = render(<MockCollection realtime={false} />);
 
-    expect(getByTestId('loading')).toHaveTextContent('Loading');
+    expect(getByText('Loading')).toBeInTheDocument();
 
     await waitForElement(() => getByTestId('todos-container'));
 
-    expect(getByTestId('todos-container').children.length).toBe(2);
-    expect(queryByTestId('loading')).not.toBeInTheDocument();
+    expect(getByText('first todo')).toBeInTheDocument();
+    expect(getByText('second todo')).toBeInTheDocument();
+    expect(queryByText('Loading')).not.toBeInTheDocument();
   });
 
   it('defaults to using realtime snapshots', () => {
-    const { getByTestId } = render(<MockCollection />);
+    const { getByText } = render(<MockCollection />);
 
-    expect(getByTestId('todos-container').children.length).toBe(2);
+    expect(getByText('first todo')).toBeInTheDocument();
+    expect(getByText('second todo')).toBeInTheDocument();
   });
 });
 
@@ -70,5 +72,22 @@ describe('Firestore Document', async () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('update');
     expect(mockCalls[0][0].result).toBe('Document 654321 successfully updated.');
+  });
+
+  it('successfully gets a document on load if fetch prop is set to true', async () => {
+    const { getByText, getByTestId, queryByText } = render(<MockDocument id={654321} fetch={true} />);
+
+    expect(getByText('Loading')).toBeInTheDocument();
+
+    await waitForElement(() => getByTestId('todo-item'));
+
+    expect(getByTestId('todo-item')).toHaveTextContent('second todo');
+    expect(queryByText('Loading')).not.toBeInTheDocument();
+  });
+
+  it('listens for document snapshots if fetch and realtime props are set to true', async () => {
+    const { getByTestId } = render(<MockDocument id={123456} fetch={true} realtime={true} />);
+
+    expect(getByTestId('todo-item')).toHaveTextContent('first todo');
   });
 });

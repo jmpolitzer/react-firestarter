@@ -2,11 +2,13 @@ const mockDocuments = {
   docs: [
     {
       data: () => ({ text: 'first todo' }),
-      id: 123456
+      id: 123456,
+      exists: true
     },
     {
       data: () => ({ text: 'second todo' }),
-      id: 654321
+      id: 654321,
+      exists: true
     }
   ]
 };
@@ -16,9 +18,14 @@ const mockFirestore = {
   collection: (collection) => ({
     add: () => (Promise.resolve(mockDocuments.docs[0])),
     get: () => (Promise.resolve(mockDocuments)),
-    doc: () => ({
+    doc: (id) => ({
       delete: () => (Promise.resolve()),
-      update: () => (Promise.resolve())
+      update: () => (Promise.resolve()),
+      get: () => (Promise.resolve(mockDocuments.docs.find(doc => doc.id === id))),
+      onSnapshot: (cb) => {
+        cb(mockDocuments.docs.find(doc => doc.id === id))
+        return () => {};
+      }
     }),
     onSnapshot: (cb) => {
       cb(mockDocuments)
