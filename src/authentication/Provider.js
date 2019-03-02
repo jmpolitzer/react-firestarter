@@ -93,25 +93,22 @@ function AuthProvider(props) {
     handleMessage && handleMessage(msg);
   };
 
-  useEffect(
-    () => {
-      const unsubscribe = fireAuth.onAuthStateChanged(user => {
-        if (user) {
-          setIsAuthenticating(false);
+  useEffect(() => {
+    const unsubscribe = fireAuth.onAuthStateChanged(user => {
+      if (user) {
+        setIsAuthenticating(false);
 
-          if (user.emailVerified) {
-            setIsAuthenticated(true);
-            setRedirectToReferrer(true);
-          }
+        if (user.emailVerified) {
+          setIsAuthenticated(true);
+          setRedirectToReferrer(true);
         }
+      }
 
-        return function cleanup() {
-          unsubscribe();
-        };
-      });
-    },
-    [isAuthenticated]
-  );
+      return function cleanup() {
+        unsubscribe();
+      };
+    });
+  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider

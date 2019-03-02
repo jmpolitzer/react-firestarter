@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import FirestoreContext from './context';
 
 /*
@@ -12,12 +12,9 @@ import FirestoreContext from './context';
 
 function FirestoreProvider(props) {
   const { firestore, children } = props;
-  const [isRequesting, setIsRequesting] = useState(false);
   const db = firestore;
 
   const add = async (collection, values, onSuccess, onError) => {
-    setIsRequesting(true);
-
     try {
       const docRef = await db.collection(collection).add(values);
 
@@ -29,10 +26,16 @@ function FirestoreProvider(props) {
 
   const remove = async (collection, id, onSuccess, onError) => {
     try {
-      const docRef = await db.collection(collection).doc(id);
-      docRef.delete();
+      await db
+        .collection(collection)
+        .doc(id)
+        .delete();
 
-      handleCallback(onSuccess, 'delete', 'Document successfully deleted.');
+      handleCallback(
+        onSuccess,
+        'delete',
+        `Document ${id} successfully deleted.`
+      );
     } catch (error) {
       handleCallback(onError, 'delete', `Error deleting document: ${error}.`);
     }
@@ -40,10 +43,16 @@ function FirestoreProvider(props) {
 
   const update = async (collection, id, values, onSuccess, onError) => {
     try {
-      const docRef = await db.collection(collection).doc(id);
-      docRef.update(values);
+      await db
+        .collection(collection)
+        .doc(id)
+        .update(values);
 
-      handleCallback(onSuccess, 'update', 'Document successfully updated.');
+      handleCallback(
+        onSuccess,
+        'update',
+        `Document ${id} successfully updated.`
+      );
     } catch (error) {
       handleCallback(onError, 'update', `Error updating document: ${error}.`);
     }
@@ -57,7 +66,7 @@ function FirestoreProvider(props) {
       if (doc.exists) {
         handleCallback(onSuccess, 'get', doc.data());
       } else {
-        handleCallback(onSuccess, 'get', 'No such document.')
+        handleCallback(onSuccess, 'get', 'No such document.');
       }
     } catch (error) {
       handleCallback(onError, 'get', `Error getting document: ${error}.`);
@@ -76,17 +85,13 @@ function FirestoreProvider(props) {
 
       handleCallback(onSuccess, 'getAll', _collection);
     } catch (error) {
-      handleCallback('error', `Error getting documents: ${error}.`);
+      handleCallback(onError, 'getAll', `Error getting documents: ${error}.`);
     }
   };
 
-  const handleCallback = (callback, action, result) => {
-    setIsRequesting(false);
-
-    if (callback) callback({ action, result });
+  const handleCallback = (next, action, result) => {
+    next({ action, result });
   };
-
-  const crud = { add, remove, update, get };
 
   return (
     <FirestoreContext.Provider
@@ -96,8 +101,7 @@ function FirestoreProvider(props) {
         remove,
         update,
         get,
-        getAll,
-        isRequesting
+        getAll
       }}
     >
       {children}
