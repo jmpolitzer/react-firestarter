@@ -13,45 +13,47 @@ import AuthContext from './context';
 */
 
 function AuthProvider(props) {
-  const { fireAuth, children, handleMessage } = props;
+  const { fireauth, children } = props;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
   const getCurrentUser = () => {
-    return fireAuth.currentUser;
+    return fireauth.currentUser;
   };
 
-  const signup = async (values, next) => {
+  const signup = async (values, onSuccess, onError) => {
     const { email, password } = values;
 
     setIsAuthenticating(true);
 
     try {
-      await fireAuth.createUserWithEmailAndPassword(email, password);
-      await fireAuth.currentUser.sendEmailVerification();
+      await fireauth.createUserWithEmailAndPassword(email, password);
+      await fireauth.currentUser.sendEmailVerification();
 
       const _msg = {
-        type: 'info',
-        text: 'Check your email for registration confirmation.'
+        action: 'signup',
+        result: 'Check your email for registration confirmation.'
       };
 
-      showMessage(_msg);
+      // showMessage(_msg);
 
-      next();
+      onSuccess(_msg);
     } catch (error) {
-      handleFireAuthFormError(error, next);
+      // handleFireAuthFormError(error, next);
+      setIsAuthenticating(false);
+      onError(error);
     }
   };
 
-  const login = async (values, next) => {
+  const login = async (values, onSuccess, onError) => {
     setIsAuthenticating(true);
 
     const { email, password } = values;
 
     try {
-      const { user } = await fireAuth.signInWithEmailAndPassword(
+      const { user } = await fireauth.signInWithEmailAndPassword(
         email,
         password
       );
@@ -59,6 +61,13 @@ function AuthProvider(props) {
       if (user.emailVerified) {
         setIsAuthenticated(true);
         setRedirectToReferrer(true);
+
+        const _msg = {
+          type: 'success',
+          text: 'You have successfully logged in.'
+        };
+
+        onSuccess(_msg);
       } else {
         setIsAuthenticating(false);
 
@@ -67,34 +76,36 @@ function AuthProvider(props) {
           text: 'Check your email for registration confirmation.'
         };
 
-        showMessage(_msg);
+        // showMessage(_msg);
 
-        next();
+        onSuccess(_msg);
       }
     } catch (error) {
-      handleFireAuthFormError(error, next);
+      // handleFireAuthFormError(error, next);
+      setIsAuthenticating(false);
+      onError(error);
     }
   };
 
   const logout = () => {
-    fireAuth.signOut();
+    fireauth.signOut();
 
     setIsAuthenticated(false);
     setRedirectToReferrer(false);
   };
 
-  const handleFireAuthFormError = (error, next) => {
-    setIsAuthenticating(false);
-
-    if (next) next(error);
-  };
-
-  const showMessage = msg => {
-    handleMessage && handleMessage(msg);
-  };
+  // const handleFireAuthFormError = (error, next) => {
+  //   setIsAuthenticating(false);
+  //
+  //   if (next) next(error);
+  // };
+  //
+  // const showMessage = msg => {
+  //   handleMessage && handleMessage(msg);
+  // };
 
   useEffect(() => {
-    const unsubscribe = fireAuth.onAuthStateChanged(user => {
+    const unsubscribe = fireauth.onAuthStateChanged(user => {
       if (user) {
         setIsAuthenticating(false);
 
