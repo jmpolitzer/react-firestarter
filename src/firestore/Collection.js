@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import FirestoreContext from './context';
 
 function Collection(props) {
@@ -47,5 +48,12 @@ function Collection(props) {
     [name]: documents
   });
 }
+
+Collection.propTypes = {
+  children: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  onError: PropTypes.func,
+  realtime: PropTypes.bool
+};
 
 export default Collection;

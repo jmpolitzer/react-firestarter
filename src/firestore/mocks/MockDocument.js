@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 import { mockFirestore, mockFirestoreError } from './mockFirestore';
 import { FirestoreProvider, Document } from '../index';
@@ -7,7 +8,7 @@ function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
   return (
     <FirestoreProvider firestore={error ? mockFirestoreError : mockFirestore}>
       <Document
-        name="todos"
+        name='todos'
         id={id}
         fetch={fetch}
         realtime={realtime}
@@ -20,7 +21,7 @@ function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
           } else {
             if (doc) {
               return (
-                <div data-testid="todo-item">
+                <div data-testid='todo-item'>
                   {typeof doc === 'string' ? doc : doc.text}
                 </div>
               );
@@ -39,5 +40,14 @@ function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
     </FirestoreProvider>
   );
 }
+
+MockDocument.propTypes = {
+  id: PropTypes.any,
+  fetch: PropTypes.bool,
+  realtime: PropTypes.bool,
+  onSuccess: PropTypes.func,
+  onError: PropTypes.func,
+  error: PropTypes.bool
+};
 
 export default MockDocument;

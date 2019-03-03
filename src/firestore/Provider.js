@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FirestoreContext from './context';
 
 /*
@@ -108,5 +109,10 @@ function FirestoreProvider(props) {
     </FirestoreContext.Provider>
   );
 }
+
+FirestoreProvider.propTypes = {
+  firestore: PropTypes.object.isRequired,
+  children: PropTypes.element.isRequired
+};
 
 export default FirestoreProvider;

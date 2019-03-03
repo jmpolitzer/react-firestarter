@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import FirestoreContext from './context';
 
 function Document(props) {
@@ -71,5 +72,15 @@ function Document(props) {
     isLoading
   });
 }
+
+Document.propTypes = {
+  children: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  id: PropTypes.any,
+  onSuccess: PropTypes.func,
+  onError: PropTypes.func,
+  realtime: PropTypes.bool,
+  fetch: PropTypes.bool
+};
 
 export default Document;
