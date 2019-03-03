@@ -64,7 +64,9 @@
   "files": [
     "dist"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "prop-types": "^15.7.2"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && npm test"
