@@ -8,29 +8,26 @@ const mockVerifiedCurrentUser = {
   email: 'turd@ferguson.com'
 };
 
-const mockFireauth = {
-  createUserWithEmailAndPassword: () => Promise.resolve(),
-  signInWithEmailAndPassword: () => Promise.resolve(),
-  logout: () => {},
-  currentUser: mockNoCurrentUser,
-  onAuthStateChanged: cb => {
-    cb(mockFireauth.currentUser);
-    return () => {};
-  }
+const types = {
+  none: mockNoCurrentUser,
+  unverified: mockUnverifiedCurrentUser,
+  verified: mockVerifiedCurrentUser,
+  loggedIn: mockVerifiedCurrentUser
 };
 
-const mockFireauthNoUser = { ...mockFireauth, currentUser: mockNoCurrentUser };
-const mockFireauthUnverifiedUser = {
-  ...mockFireauth,
-  currentUser: mockUnverifiedCurrentUser
-};
-const mockFireauthVerifiedUser = {
-  ...mockFireauth,
-  currentUser: mockVerifiedCurrentUser
+const mockFireauth = userType => {
+  const currentUser = types[userType];
+
+  return {
+    createUserWithEmailAndPassword: () => Promise.resolve(),
+    signInWithEmailAndPassword: () => Promise.resolve({ user: currentUser }),
+    logout: () => {},
+    currentUser: currentUser,
+    onAuthStateChanged: cb => {
+      cb(userType === 'loggedIn' ? currentUser : null);
+      return () => {};
+    }
+  };
 };
 
-export {
-  mockFireauthNoUser,
-  mockFireauthUnverifiedUser,
-  mockFireauthVerifiedUser
-};
+export default mockFireauth;

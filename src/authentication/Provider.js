@@ -37,11 +37,9 @@ function AuthProvider(props) {
         result: 'Check your email for registration confirmation.'
       };
 
-      // showMessage(_msg);
-
+      setIsAuthenticating(false);
       onSuccess(_msg);
     } catch (error) {
-      // handleFireAuthFormError(error, next);
       setIsAuthenticating(false);
       onError(error);
     }
@@ -63,25 +61,22 @@ function AuthProvider(props) {
         setRedirectToReferrer(true);
 
         const _msg = {
-          type: 'success',
-          text: 'You have successfully logged in.'
+          action: 'login',
+          result: 'You have successfully logged in.'
         };
 
+        setIsAuthenticating(false);
         onSuccess(_msg);
       } else {
-        setIsAuthenticating(false);
-
         const _msg = {
-          type: 'info',
-          text: 'Check your email for registration confirmation.'
+          action: 'login',
+          result: 'Check your email for registration confirmation.'
         };
 
-        // showMessage(_msg);
-
+        setIsAuthenticating(false);
         onSuccess(_msg);
       }
     } catch (error) {
-      // handleFireAuthFormError(error, next);
       setIsAuthenticating(false);
       onError(error);
     }
@@ -94,32 +89,18 @@ function AuthProvider(props) {
     setRedirectToReferrer(false);
   };
 
-  // const handleFireAuthFormError = (error, next) => {
-  //   setIsAuthenticating(false);
-  //
-  //   if (next) next(error);
-  // };
-  //
-  // const showMessage = msg => {
-  //   handleMessage && handleMessage(msg);
-  // };
-
   useEffect(() => {
     const unsubscribe = fireauth.onAuthStateChanged(user => {
-      if (user) {
-        setIsAuthenticating(false);
-
-        if (user.emailVerified) {
-          setIsAuthenticated(true);
-          setRedirectToReferrer(true);
-        }
+      if (user && user.emailVerified) {
+        setIsAuthenticated(true);
+        setRedirectToReferrer(true);
       }
 
       return function cleanup() {
         unsubscribe();
       };
     });
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <AuthContext.Provider

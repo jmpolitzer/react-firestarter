@@ -1,27 +1,13 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  mockFireauthNoUser,
-  mockFireauthUnverifiedUser,
-  mockFireauthVerifiedUser
-} from './mockFireauth';
+import mockFireauth from './mockFireauth';
 import { AuthProvider, Authenticator } from '../index';
 
-/* NOTE: Test redirectToReferrer */
+/* NOTE: Test redirectToReferrer & no email verification */
 function MockAuthenticator({ userType, onSuccess, onError }) {
-  const getMockFireauthByUserType = () => {
-    const types = {
-      none: mockFireauthNoUser,
-      unverified: mockFireauthUnverifiedUser,
-      verified: mockFireauthVerifiedUser
-    };
-
-    return types[userType];
-  };
-
   return (
-    <AuthProvider fireauth={getMockFireauthByUserType()}>
+    <AuthProvider fireauth={mockFireauth(userType)}>
       <Authenticator onSuccess={onSuccess} onError={onError}>
         {({
           isAuthenticated,
@@ -40,7 +26,7 @@ function MockAuthenticator({ userType, onSuccess, onError }) {
             );
           } else {
             if (isAuthenticating) {
-              return <div>Loading</div>;
+              return <div>Authenticating</div>;
             } else {
               return (
                 <Fragment>
