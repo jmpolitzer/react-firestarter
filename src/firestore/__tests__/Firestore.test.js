@@ -8,8 +8,8 @@ import {
 } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
-import MockCollection from '../mocks/mockCollection';
-import MockDocument from '../mocks/mockDocument';
+import MockCollection from '../__mocks__/mockCollection';
+import MockDocument from '../__mocks__/mockDocument';
 
 const mockOnSuccess = jest.fn();
 const mockOnError = jest.fn();

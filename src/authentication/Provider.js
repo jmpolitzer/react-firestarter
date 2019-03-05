@@ -117,7 +117,7 @@ function AuthProvider(props) {
 
 AuthProvider.propTypes = {
   fireauth: PropTypes.object,
-  children: PropTypes.func
+  children: PropTypes.object
 };
 
 export default AuthProvider;

@@ -8,7 +8,7 @@ import {
 } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 
-import MockAuthenticator from '../mocks/mockAuthenticator';
+import MockAuthenticator from '../__mocks__/mockAuthenticator';
 
 const mockOnSuccess = jest.fn();
 const mockOnError = jest.fn();
