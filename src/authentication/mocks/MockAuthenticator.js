@@ -1,18 +1,17 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import mockFireauth from './mockFireauth';
-import { AuthProvider, Authenticator } from '../index';
+import { mockFireauth, mockFireauthError } from './mockFireauth';
+import { AuthProvider, Authenticator } from '../../index';
 
-/* NOTE: Test redirectToReferrer & no email verification */
-function MockAuthenticator({ userType, onSuccess, onError }) {
+function MockAuthenticator({ userType, onSuccess, onError, error }) {
   return (
-    <AuthProvider fireauth={mockFireauth(userType)}>
+    <AuthProvider fireauth={error ? mockFireauthError : mockFireauth(userType)}>
       <Authenticator onSuccess={onSuccess} onError={onError}>
         {({
           isAuthenticated,
           isAuthenticating,
-          redirectToReferrer,
+          redirectToReferrer /* NOTE: Test redirectToReferrer & no email verification */,
           getCurrentUser,
           signup,
           login,
@@ -21,6 +20,7 @@ function MockAuthenticator({ userType, onSuccess, onError }) {
           if (isAuthenticated) {
             return (
               <Fragment>
+                <div>{getCurrentUser().email}</div>
                 <button onClick={logout}>Logout</button>
               </Fragment>
             );
@@ -43,7 +43,10 @@ function MockAuthenticator({ userType, onSuccess, onError }) {
 }
 
 MockAuthenticator.propTypes = {
-  userType: PropTypes.string.isRequired
+  userType: PropTypes.string,
+  onSuccess: PropTypes.func,
+  onError: PropTypes.func,
+  error: PropTypes.bool
 };
 
 export default MockAuthenticator;

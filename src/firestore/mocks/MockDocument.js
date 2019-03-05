@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import { mockFirestore, mockFirestoreError } from './mockFirestore';
-import { FirestoreProvider, Document } from '../index';
+import { FirestoreProvider, Document } from '../../index';
 
 function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
   return (

@@ -21,7 +21,7 @@ const mockFireauth = userType => {
   return {
     createUserWithEmailAndPassword: () => Promise.resolve(),
     signInWithEmailAndPassword: () => Promise.resolve({ user: currentUser }),
-    logout: () => {},
+    signOut: () => {},
     currentUser: currentUser,
     onAuthStateChanged: cb => {
       cb(userType === 'loggedIn' ? currentUser : null);
@@ -30,4 +30,15 @@ const mockFireauth = userType => {
   };
 };
 
-export default mockFireauth;
+const mockFireauthError = {
+  createUserWithEmailAndPassword: () =>
+    Promise.reject(new Error('We had trouble signing you up.')),
+  signInWithEmailAndPassword: () =>
+    Promise.reject(new Error('We had trouble logging you in.')),
+  onAuthStateChanged: cb => {
+    cb(null);
+    return () => {};
+  }
+};
+
+export { mockFireauth, mockFireauthError };

@@ -55,6 +55,27 @@ describe('Firebase Authenticator', () => {
     );
   });
 
+  it('returns an error if there is a problem signing up', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='none'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Signup')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('signup');
+    expect(mockCalls[0][0].result.message).toContain(
+      'We had trouble signing you up.'
+    );
+  });
+
   it('does not login an unverified user', async () => {
     const { getByText } = render(
       <MockAuthenticator
@@ -100,6 +121,27 @@ describe('Firebase Authenticator', () => {
     );
   });
 
+  it('returns an error if there is a problem logging in', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='verified'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Login')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('login');
+    expect(mockCalls[0][0].result.message).toContain(
+      'We had trouble logging you in.'
+    );
+  });
+
   it('saves the logged in state of a user', () => {
     const { getByText } = render(
       <MockAuthenticator
@@ -109,6 +151,21 @@ describe('Firebase Authenticator', () => {
       />
     );
 
+    expect(getByText('turd@ferguson.com')).toBeInTheDocument();
     expect(getByText('Logout')).toBeInTheDocument();
+  });
+
+  it('logs out a user', () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedIn'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    fireEvent.click(getByText('Logout'));
+
+    expect(getByText('Login')).toBeInTheDocument();
   });
 });
