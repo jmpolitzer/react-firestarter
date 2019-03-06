@@ -4,8 +4,6 @@
 
 [![NPM](https://img.shields.io/npm/v/react-firestarter.svg)](https://www.npmjs.com/package/react-firestarter) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## WIP - DO NOT USE!
-
 ## Install
 
 ```bash
@@ -15,9 +13,30 @@ npm install --save react-firestarter
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
+import React from 'react'
 
-import { FirestoreProvider, FirestoreContext } from 'react-firestarter'
+import { AuthProvider, Authenticator } from 'react-firestarter'
+
+function Auth() {
+  return () {
+    <AuthProvider fireauth={firebase.auth(}>
+      <Authenticator onSuccess={onSuccess} onError={onError}>
+        {({ isAuthenticated, signup, login, logout }) => {
+          if (isAuthenticated) {
+            return <div onClick={logout}>Logout</div>;
+          } else {
+            return (
+              <>
+                <button onClick={signup}>Signup</button>
+                <button onClick={login}>Login</button>
+              <>
+            );
+          }
+        }}
+      </Authenticator>
+    </AuthProvider>  
+  }
+}
 
 ...
 ```
