@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { mockFirestore, mockFirestoreError } from './mockFirestore';
-import { FirestoreProvider, Collection } from '../index';
+import { FirestoreProvider, Collection } from '../../index';
 
 function MockCollection({ error, realtime, onError }) {
   return (

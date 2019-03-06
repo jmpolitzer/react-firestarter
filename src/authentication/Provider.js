@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import AuthContext from './context';
 
 /*
@@ -8,107 +9,106 @@ import AuthContext from './context';
     - update password
     - update user's profile
     - send password reset email
+    - resent email verification
     - reauthenticate user
     - reCaptcha for too many unsuccessful login attempts
 */
 
 function AuthProvider(props) {
-  const { fireAuth, children, handleMessage } = props;
+  const { fireauth, verifyByEmail = true, children } = props;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
   const getCurrentUser = () => {
-    return fireAuth.currentUser;
+    return fireauth.currentUser;
   };
 
-  const signup = async (values, next) => {
+  const signup = async (values, onSuccess, onError) => {
     const { email, password } = values;
 
     setIsAuthenticating(true);
 
     try {
-      await fireAuth.createUserWithEmailAndPassword(email, password);
-      await fireAuth.currentUser.sendEmailVerification();
+      await fireauth.createUserWithEmailAndPassword(email, password);
 
-      const _msg = {
-        type: 'info',
-        text: 'Check your email for registration confirmation.'
-      };
+      if (verifyByEmail) {
+        await fireauth.currentUser.sendEmailVerification();
 
-      showMessage(_msg);
+        handleCallback(
+          onSuccess,
+          'signup',
+          'Check your email for registration confirmation.'
+        );
+      } else {
+        handleCallback(
+          onSuccess,
+          'signup',
+          'Thanks for signing up. Please login to continue.'
+        );
+      }
 
-      next();
+      setIsAuthenticating(false);
     } catch (error) {
-      handleFireAuthFormError(error, next);
+      setIsAuthenticating(false);
+      handleCallback(onError, 'signup', error);
     }
   };
 
-  const login = async (values, next) => {
+  const login = async (values, onSuccess, onError) => {
     setIsAuthenticating(true);
 
     const { email, password } = values;
 
     try {
-      const { user } = await fireAuth.signInWithEmailAndPassword(
+      const { user } = await fireauth.signInWithEmailAndPassword(
         email,
         password
       );
 
-      if (user.emailVerified) {
+      if (user.emailVerified || (user && !verifyByEmail)) {
         setIsAuthenticated(true);
         setRedirectToReferrer(true);
+        setIsAuthenticating(false);
+        handleCallback(onSuccess, 'login', 'You have successfully logged in.');
       } else {
         setIsAuthenticating(false);
-
-        const _msg = {
-          type: 'info',
-          text: 'Check your email for registration confirmation.'
-        };
-
-        showMessage(_msg);
-
-        next();
+        handleCallback(
+          onSuccess,
+          'login',
+          'Check your email for registration confirmation.'
+        );
       }
     } catch (error) {
-      handleFireAuthFormError(error, next);
+      setIsAuthenticating(false);
+      handleCallback(onError, 'login', error);
     }
   };
 
   const logout = () => {
-    fireAuth.signOut();
+    fireauth.signOut();
 
     setIsAuthenticated(false);
     setRedirectToReferrer(false);
   };
 
-  const handleFireAuthFormError = (error, next) => {
-    setIsAuthenticating(false);
-
-    if (next) next(error);
-  };
-
-  const showMessage = msg => {
-    handleMessage && handleMessage(msg);
+  const handleCallback = (next, action, result) => {
+    next({ action, result });
   };
 
   useEffect(() => {
-    const unsubscribe = fireAuth.onAuthStateChanged(user => {
-      if (user) {
-        setIsAuthenticating(false);
-
-        if (user.emailVerified) {
-          setIsAuthenticated(true);
-          setRedirectToReferrer(true);
-        }
+    const unsubscribe = fireauth.onAuthStateChanged(user => {
+      if (user && user.emailVerified) {
+        setIsAuthenticated(true);
+        setRedirectToReferrer(true);
       }
-
-      return function cleanup() {
-        unsubscribe();
-      };
     });
-  }, [isAuthenticated]);
+
+    return function cleanup() {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -126,5 +126,11 @@ function AuthProvider(props) {
     </AuthContext.Provider>
   );
 }
+
+AuthProvider.propTypes = {
+  fireauth: PropTypes.object,
+  children: PropTypes.object,
+  verifyByEmail: PropTypes.bool
+};
 
 export default AuthProvider;
