@@ -1,6 +1,6 @@
 # react-firestarter
 
-> Firebase Component for React
+> Firebase Components for React
 
 [![NPM](https://img.shields.io/npm/v/react-firestarter.svg)](https://www.npmjs.com/package/react-firestarter) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -19,7 +19,7 @@ import { AuthProvider, Authenticator } from 'react-firestarter'
 
 function Auth() {
   return () {
-    <AuthProvider fireauth={firebase.auth(}>
+    <AuthProvider fireauth={firebase.auth()}>
       <Authenticator onSuccess={onSuccess} onError={onError}>
         {({ isAuthenticated, signup, login, logout }) => {
           if (isAuthenticated) {
