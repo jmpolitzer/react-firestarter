@@ -11,7 +11,7 @@ function MockAuthenticator({ userType, onSuccess, onError, error }) {
         {({
           isAuthenticated,
           isAuthenticating,
-          redirectToReferrer /* NOTE: Test redirectToReferrer & no email verification */,
+          redirectToReferrer,
           getCurrentUser,
           signup,
           login,
@@ -21,6 +21,9 @@ function MockAuthenticator({ userType, onSuccess, onError, error }) {
             return (
               <Fragment>
                 <div>{getCurrentUser().email}</div>
+                <div>{`I should ${
+                  !redirectToReferrer ? 'not ' : ''
+                }redirect to the referring url.`}</div>
                 <button onClick={logout}>Logout</button>
               </Fragment>
             );

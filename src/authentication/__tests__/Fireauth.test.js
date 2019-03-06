@@ -111,6 +111,7 @@ describe('Firebase Authenticator', () => {
 
     await waitForElement(() => getByText('Authenticating'));
     await waitForElement(() => getByText('Logout'));
+    getByText('I should redirect to the referring url.');
 
     const mockCalls = mockOnSuccess.mock.calls;
 

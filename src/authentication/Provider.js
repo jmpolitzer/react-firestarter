@@ -9,6 +9,7 @@ import AuthContext from './context';
     - update password
     - update user's profile
     - send password reset email
+    - resent email verification
     - reauthenticate user
     - reCaptcha for too many unsuccessful login attempts
 */
