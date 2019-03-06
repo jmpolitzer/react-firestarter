@@ -27,18 +27,29 @@ function AuthProvider(props) {
 
   const signup = async (values, onSuccess, onError) => {
     const { email, password } = values;
+
     setIsAuthenticating(true);
 
     try {
       await fireauth.createUserWithEmailAndPassword(email, password);
-      if (verifyByEmail) await fireauth.currentUser.sendEmailVerification();
+
+      if (verifyByEmail) {
+        await fireauth.currentUser.sendEmailVerification();
+
+        handleCallback(
+          onSuccess,
+          'signup',
+          'Check your email for registration confirmation.'
+        );
+      } else {
+        handleCallback(
+          onSuccess,
+          'signup',
+          'Thanks for signing up. Please login to continue.'
+        );
+      }
 
       setIsAuthenticating(false);
-      handleCallback(
-        onSuccess,
-        'signup',
-        'Check your email for registration confirmation.'
-      );
     } catch (error) {
       setIsAuthenticating(false);
       handleCallback(onError, 'signup', error);
@@ -118,7 +129,8 @@ function AuthProvider(props) {
 
 AuthProvider.propTypes = {
   fireauth: PropTypes.object,
-  children: PropTypes.object
+  children: PropTypes.object,
+  verifyByEmail: PropTypes.bool
 };
 
 export default AuthProvider;

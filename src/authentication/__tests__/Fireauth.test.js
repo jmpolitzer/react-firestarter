@@ -55,6 +55,30 @@ describe('Firebase Authenticator', () => {
     );
   });
 
+  it('signs up a user and does not send an email verification if AuthProvider verifyByEmail prop is set to false', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='unverified'
+        verifyByEmail={false}
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    fireEvent.click(getByText('Signup'));
+
+    await waitForElement(() => getByText('Authenticating'));
+    await waitForElement(() => getByText('Signup'));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('signup');
+    expect(mockCalls[0][0].result).toContain(
+      'Thanks for signing up. Please login to continue.'
+    );
+  });
+
   it('returns an error if there is a problem signing up', async () => {
     const { getByText } = render(
       <MockAuthenticator
