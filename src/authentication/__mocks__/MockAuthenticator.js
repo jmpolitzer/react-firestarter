@@ -4,9 +4,18 @@ import PropTypes from 'prop-types';
 import { mockFireauth, mockFireauthError } from './mockFireauth';
 import { AuthProvider, Authenticator } from '../../index';
 
-function MockAuthenticator({ userType, onSuccess, onError, error }) {
+function MockAuthenticator({
+  userType,
+  verifyByEmail,
+  onSuccess,
+  onError,
+  error
+}) {
   return (
-    <AuthProvider fireauth={error ? mockFireauthError : mockFireauth(userType)}>
+    <AuthProvider
+      fireauth={error ? mockFireauthError : mockFireauth(userType)}
+      verifyByEmail={verifyByEmail}
+    >
       <Authenticator onSuccess={onSuccess} onError={onError}>
         {({
           isAuthenticated,

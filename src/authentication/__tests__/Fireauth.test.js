@@ -98,6 +98,29 @@ describe('Firebase Authenticator', () => {
     );
   });
 
+  it('logs in an unverified user if AuthProvider verifyByEmail prop is set to false', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='unverified'
+        verifyByEmail={false}
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    fireEvent.click(getByText('Login'));
+    await waitForElement(() => getByText('Authenticating'));
+    await waitForElement(() => getByText('Logout'));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('login');
+    expect(mockCalls[0][0].result).toContain(
+      'You have successfully logged in.'
+    );
+  });
+
   it('logs in a verified user', async () => {
     const { getByText } = render(
       <MockAuthenticator

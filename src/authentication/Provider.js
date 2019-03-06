@@ -15,7 +15,7 @@ import AuthContext from './context';
 */
 
 function AuthProvider(props) {
-  const { fireauth, children } = props;
+  const { fireauth, verifyByEmail = true, children } = props;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -31,7 +31,7 @@ function AuthProvider(props) {
 
     try {
       await fireauth.createUserWithEmailAndPassword(email, password);
-      await fireauth.currentUser.sendEmailVerification();
+      if (verifyByEmail) await fireauth.currentUser.sendEmailVerification();
 
       setIsAuthenticating(false);
       handleCallback(
@@ -56,7 +56,7 @@ function AuthProvider(props) {
         password
       );
 
-      if (user.emailVerified) {
+      if (user.emailVerified || (user && !verifyByEmail)) {
         setIsAuthenticated(true);
         setRedirectToReferrer(true);
         setIsAuthenticating(false);
