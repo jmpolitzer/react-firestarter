@@ -8,7 +8,7 @@ function MockDocument({ id, fetch, realtime, onSuccess, onError, error }) {
   return (
     <FirestoreProvider firestore={error ? mockFirestoreError : mockFirestore}>
       <Document
-        name='todos'
+        collection='todos'
         id={id}
         fetch={fetch}
         realtime={realtime}

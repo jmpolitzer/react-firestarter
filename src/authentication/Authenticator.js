@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import PropTypes from 'prop-types';
 import AuthContext from './context';
 
 function Authenticator(props) {
@@ -32,5 +33,10 @@ function Authenticator(props) {
     logout
   });
 }
+
+Authenticator.propTypes = {
+  onSuccess: PropTypes.func,
+  onError: PropTypes.func
+};
 
 export default Authenticator;

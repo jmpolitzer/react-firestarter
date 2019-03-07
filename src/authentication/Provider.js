@@ -94,7 +94,7 @@ function AuthProvider(props) {
   };
 
   const handleCallback = (next, action, result) => {
-    next({ action, result });
+    if (next) next({ action, result });
   };
 
   useEffect(() => {
@@ -128,8 +128,8 @@ function AuthProvider(props) {
 }
 
 AuthProvider.propTypes = {
-  fireauth: PropTypes.object,
-  children: PropTypes.object,
+  fireauth: PropTypes.object.isRequired,
+  children: PropTypes.object.isRequired,
   verifyByEmail: PropTypes.bool
 };
 

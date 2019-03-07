@@ -10,10 +10,10 @@ function MockCollection({ error, realtime, onError }) {
       <Collection name='todos' realtime={realtime} onError={onError}>
         {({ isLoading, todos }) => {
           if (isLoading) {
-            return <div data-testid='loading'>Loading</div>;
+            return <div>Loading</div>;
           } else {
             return (
-              <div data-testid='todos-container'>
+              <div>
                 {todos.map((todo, i) => (
                   <div key={i}>{todo.text}</div>
                 ))}

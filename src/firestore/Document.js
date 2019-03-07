@@ -5,7 +5,7 @@ import FirestoreContext from './context';
 function Document(props) {
   const {
     children,
-    name,
+    collection,
     id,
     onSuccess,
     onError,
@@ -19,15 +19,15 @@ function Document(props) {
   const db = firestore;
 
   const addDocument = values => {
-    add(name, values, onSuccess, onError);
+    add(collection, values, onSuccess, onError);
   };
 
   const removeDocument = () => {
-    remove(name, id, onSuccess, onError);
+    remove(collection, id, onSuccess, onError);
   };
 
   const updateDocument = values => {
-    update(name, id, values, onSuccess, onError);
+    update(collection, id, values, onSuccess, onError);
   };
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function Document(props) {
 
       if (realtime) {
         const unsubscribe = db
-          .collection(name)
+          .collection(collection)
           .doc(id)
           .onSnapshot(doc => {
             const _doc = doc.data();
@@ -50,14 +50,14 @@ function Document(props) {
         };
       } else {
         get(
-          name,
+          collection,
           id,
           ({ result: _doc }) => {
             setIsLoading(false);
             setDocument(_doc);
           },
           error => {
-            onError(error);
+            if (onError) onError(error);
           }
         );
       }
@@ -75,7 +75,7 @@ function Document(props) {
 
 Document.propTypes = {
   children: PropTypes.func.isRequired,
-  name: PropTypes.string.isRequired,
+  collection: PropTypes.string.isRequired,
   id: PropTypes.any,
   onSuccess: PropTypes.func,
   onError: PropTypes.func,

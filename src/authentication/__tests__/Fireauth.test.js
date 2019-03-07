@@ -190,6 +190,18 @@ describe('Firebase Authenticator', () => {
     );
   });
 
+  it('does not return an error if there is a problem logging in and no onError prop is passed', async () => {
+    const { getByText } = render(
+      <MockAuthenticator userType='verified' onSuccess={mockOnSuccess} error />
+    );
+
+    await wait(() => fireEvent.click(getByText('Login')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(0);
+  });
+
   it('saves the logged in state of a user', () => {
     const { getByText } = render(
       <MockAuthenticator
