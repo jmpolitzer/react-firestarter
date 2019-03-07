@@ -20,7 +20,7 @@ import React from 'react'
 import { AuthProvider, Authenticator } from 'react-firestarter'
 
 function Auth() {
-  return () {
+  return (
     <AuthProvider fireauth={firebase.auth()}>
       <Authenticator onSuccess={onSuccess} onError={onError}>
         {({ isAuthenticated, signup, login, logout }) => {
@@ -37,9 +37,49 @@ function Auth() {
         }}
       </Authenticator>
     </AuthProvider>  
-  }
+  );
 }
 ```
+### Firestore
+```jsx
+import React from 'react';
+
+import { FirestoreProvider, Collection, Document } from 'react-firestarter';
+
+function Firestore() {
+  return (
+    <FirestoreProvider firestore={firebase.firestore()}>
+      <Collection name="todos">
+        {({ isLoading, todos })} => {
+          if (isLoading) {
+            return <div>Loading</div>;
+          } else {
+            (
+              todos.map(todo => {
+                const { id, text } = todo;
+                
+                return (
+                  <Document key={id} id={id} collection="todos">
+                    {({ remove })} => {
+                      <div>
+                        <span>{text}</span>
+                        <span>
+                          <button onClick={remove}>X</button>
+                        </span>
+                      </div>
+                    }
+                  </Document>
+                );
+              });
+            )
+          }
+        }
+      </Collection>
+    </FirestoreProvider>
+  );
+}
+```
+
 ## Render Methods and Props
 
 ### AuthProvider
