@@ -86,7 +86,7 @@ function Firestore() {
 
 | Name | Type | Default | Description |
 | --- | :---: | :---: | --- |
-| fireauth      | object | required | your own initialized firebase authentication module |
+| fireauth | object | required | your own initialized firebase authentication module |
 | verifyByEmail | bool | true | if true, users will be required to verify their identity through an email upon signup |
 
 ### Authenticator
@@ -107,6 +107,48 @@ An instantiated `Authenticator` will receive the following:
 | signup | func | signs a user up; will send a verification email unless `verifyByEmail` is set to false in `AuthProvider` |
 | login | func | logs a user in; will not succeed if the user has not and should verify their identity via email |
 | logout | func | logs a user out |
+
+### FirestoreProvider
+
+| Name | Type | Default | Description |
+| --- | :---: | :---: | --- |
+| firestore | object | required | your own initialized firebase firestore module |
+
+### Collection
+
+| Name | Type | Default | Description |
+| --- | :---: | :---: | --- |
+| name | string | required | name of the firestore collection |
+| onError | func | | function to call upon successful get of collection; only required if `realtime` is set to false |
+| realtime | bool | true | listen for realtime snapshot updates |
+
+An instantiated `Collection` will receive the following:
+
+| Name | Type | Description |
+| --- | :---: | --- |
+| isLoading | bool | lets us know if our document collection is in the process of loading |
+| `[collectionName]` | array | collection of documents; contains an id and the result of `doc.data()`; the prop name is the same as the `name` prop passed into `Collection` |
+
+### Document
+
+| Name | Type | Default | Description |
+| --- | :---: | :---: | --- |
+| collection | string | required | name of the firestore collection the document belongs to |
+| id | any | | id of the document; required for all methods except `add`  |
+| onSuccess | func | | function to call upon successful execution of `add`, `remove`, `update` |
+| onError | func | | function to call upon failed execution of `add`, `remove`, `update`, and non-realtime get |
+| realtime | bool | false | listen for realtime snapshot updates |
+| fetch | bool | false | get a document or listen for realtime snapshot updates |
+
+An instantiated `Document` will receive the following:
+
+| Name | Type | Description |
+| --- | :---: | --- |
+| add | func | adds a document |
+| remove | func | removes a document |
+| update | func | updates a document |
+| doc | object | a single document object; contains the result of `doc.data()` |
+| isLoading | bool | lets us know if our document is in the process of loading |
 
 ## License
 
