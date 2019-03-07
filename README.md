@@ -12,6 +12,8 @@ npm install --save react-firestarter
 
 ## Usage
 
+### Authentication
+
 ```jsx
 import React from 'react'
 
@@ -23,7 +25,7 @@ function Auth() {
       <Authenticator onSuccess={onSuccess} onError={onError}>
         {({ isAuthenticated, signup, login, logout }) => {
           if (isAuthenticated) {
-            return <div onClick={logout}>Logout</div>;
+            return <button onClick={logout}>Logout</button>;
           } else {
             return (
               <>
@@ -37,9 +39,34 @@ function Auth() {
     </AuthProvider>  
   }
 }
-
-...
 ```
+## Render Methods and Props
+
+### AuthProvider
+
+| Name | Type | Default | Description |
+| --- | :---: | :---: | --- |
+| fireauth      | object | required | your own initialized firebase authentication module |
+| verifyByEmail | bool | true | if true, users will be required to verify their identity through an email upon signup |
+
+### Authenticator
+
+| Name | Type | Default | Description |
+| --- | :---: | :---: | --- |
+| onSuccess | func |  | function to call upon successful login or signup |
+| onError | func | | function to call upon failed login or signup |
+
+An instantiated `Authenticator` will receive the following:
+
+| Name | Type | Description |
+| --- | :---: | --- |
+| isAuthenticated | bool | lets us know if we have an authenticated user |
+| isAuthenticating | bool | lets us know if a user is in the process of authenticating |
+| redirectToReferrer | bool | useful for redirecting an authenticated user to original route they landed upon |
+| getCurrentUser | func | returns our authenticated user |
+| signup | func | signs a user up; will send a verification email unless `verifyByEmail` is set to false in `AuthProvider` |
+| login | func | logs a user in; will not succeed if the user has not and should verify their identity via email |
+| logout | func | logs a user out |
 
 ## License
 
