@@ -91,7 +91,7 @@ function FirestoreProvider(props) {
   };
 
   const handleCallback = (next, action, result) => {
-    next({ action, result });
+    if (next) next({ action, result });
   };
 
   return (

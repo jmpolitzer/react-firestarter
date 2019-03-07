@@ -23,15 +23,15 @@ afterEach(() => {
 
 describe('Firestore Collection', () => {
   it('renders a toggleable loading indicator and a collection of documents', async () => {
-    const { getByText, getByTestId, queryByText } = render(
+    const { getByText, queryByText } = render(
       <MockCollection realtime={false} />
     );
 
     expect(getByText('Loading')).toBeInTheDocument();
 
-    await waitForElement(() => getByTestId('todos-container'));
+    await waitForElement(() => getByText('first todo'));
 
-    expect(getByText('first todo')).toBeInTheDocument();
+    // expect(getByText('first todo')).toBeInTheDocument();
     expect(getByText('second todo')).toBeInTheDocument();
     expect(queryByText('Loading')).not.toBeInTheDocument();
   });
@@ -53,6 +53,16 @@ describe('Firestore Collection', () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('getAll');
     expect(mockCalls[0][0].result).toContain('Error getting documents');
+  });
+
+  it('does not return an error if there is a problem getting all documents and no onError prop is passed', async () => {
+    render(<MockCollection error realtime={false} />);
+
+    await wait(() => {});
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(0);
   });
 });
 
@@ -83,6 +93,18 @@ describe('Firestore Document', async () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('add');
     expect(mockCalls[0][0].result).toContain('Error adding document');
+  });
+
+  it('does not return an error if there is a problem adding a document and no onError prop is passed', async () => {
+    const { getByText } = render(
+      <MockDocument error onSuccess={mockOnSuccess} />
+    );
+
+    await wait(() => fireEvent.click(getByText('Add')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(0);
   });
 
   it('successfully removes a document', async () => {
@@ -181,13 +203,7 @@ describe('Firestore Document', async () => {
 
   it('returns an error if there is a problem getting a document', async () => {
     render(
-      <MockDocument
-        error
-        id={987654}
-        fetch={true}
-        onSuccess={mockOnSuccess}
-        onError={mockOnError}
-      />
+      <MockDocument error id={987654} fetch={true} onError={mockOnError} />
     );
 
     await wait(() => {});
@@ -197,6 +213,16 @@ describe('Firestore Document', async () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('get');
     expect(mockCalls[0][0].result).toContain('Error getting document');
+  });
+
+  it('does not return an error if there is a problem getting a document and no onError prop is passed', async () => {
+    render(<MockDocument error id={987654} fetch={true} />);
+
+    await wait(() => {});
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(0);
   });
 
   it('listens for document snapshots if fetch and realtime props are set to true', async () => {

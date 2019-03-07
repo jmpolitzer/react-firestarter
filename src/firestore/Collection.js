@@ -37,7 +37,7 @@ function Collection(props) {
           setDocuments(_documents);
         },
         error => {
-          onError(error);
+          if (onError) onError(error);
         }
       );
     }
