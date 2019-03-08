@@ -3,7 +3,7 @@
 > Firebase Components for React
 
 [![NPM](https://img.shields.io/npm/v/react-firestarter.svg)](https://www.npmjs.com/package/react-firestarter) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Build Status](https://travis-ci.org/jmpolitzer/react-firestarter.svg?branch=master)](https://travis-ci.org/jmpolitzer/react-firestarter)
+[![Build Status](https://travis-ci.com/jmpolitzer/react-firestarter.svg?branch=master)](https://travis-ci.com/jmpolitzer/react-firestarter)
 [![Coverage Status](https://coveralls.io/repos/github/jmpolitzer/react-firestarter/badge.svg?branch=master)](https://coveralls.io/github/jmpolitzer/react-firestarter?branch=master)
 
 ## Install
