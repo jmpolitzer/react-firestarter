@@ -17,9 +17,9 @@ npm install --save react-firestarter
 ### Authentication
 
 ```jsx
-import React from 'react'
+import React from 'react';
 
-import { AuthProvider, Authenticator } from 'react-firestarter'
+import { AuthProvider, Authenticator } from 'react-firestarter';
 
 function Auth() {
   return (
@@ -30,10 +30,10 @@ function Auth() {
             return <button onClick={logout}>Logout</button>;
           } else {
             return (
-              <>
+              <div>
                 <button onClick={signup}>Signup</button>
                 <button onClick={login}>Login</button>
-              <>
+              </div>
             );
           }
         }}
