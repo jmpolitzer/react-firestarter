@@ -40,9 +40,8 @@ describe('Firebase Authenticator', () => {
       />
     );
 
-    await wait(() =>
-      fireEvent.click(getByText('Signup'))
-    ); /* NOTE: Waiting for verification email to be sent. */
+    fireEvent.click(getByText('Signup'));
+
     await waitForElement(() => getByText('Authenticating'));
     await waitForElement(() => getByText('Signup'));
 
