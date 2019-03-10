@@ -15,17 +15,22 @@ function FirestoreProvider(props) {
   const { firestore, children } = props;
   const db = firestore;
 
-  const add = async (collection, values, onSuccess, onError) => {
+  const add = async (collection, values, context, onSuccess, onError) => {
     try {
       const docRef = await db.collection(collection).add(values);
 
-      handleCallback(onSuccess, 'add', docRef.id);
+      handleCallback(onSuccess, 'add', docRef.id, context);
     } catch (error) {
-      handleCallback(onError, 'add', `Error adding document: ${error}.`);
+      handleCallback(
+        onError,
+        'add',
+        `Error adding document: ${error}.`,
+        context
+      );
     }
   };
 
-  const remove = async (collection, id, onSuccess, onError) => {
+  const remove = async (collection, id, context, onSuccess, onError) => {
     try {
       await db
         .collection(collection)
@@ -35,14 +40,27 @@ function FirestoreProvider(props) {
       handleCallback(
         onSuccess,
         'delete',
-        `Document ${id} successfully deleted.`
+        `Document ${id} successfully deleted.`,
+        context
       );
     } catch (error) {
-      handleCallback(onError, 'delete', `Error deleting document: ${error}.`);
+      handleCallback(
+        onError,
+        'delete',
+        `Error deleting document: ${error}.`,
+        context
+      );
     }
   };
 
-  const update = async (collection, id, values, onSuccess, onError) => {
+  const update = async (
+    collection,
+    id,
+    values,
+    context,
+    onSuccess,
+    onError
+  ) => {
     try {
       await db
         .collection(collection)
@@ -52,10 +70,16 @@ function FirestoreProvider(props) {
       handleCallback(
         onSuccess,
         'update',
-        `Document ${id} successfully updated.`
+        `Document ${id} successfully updated.`,
+        context
       );
     } catch (error) {
-      handleCallback(onError, 'update', `Error updating document: ${error}.`);
+      handleCallback(
+        onError,
+        'update',
+        `Error updating document: ${error}.`,
+        context
+      );
     }
   };
 
@@ -90,8 +114,8 @@ function FirestoreProvider(props) {
     }
   };
 
-  const handleCallback = (next, action, result) => {
-    if (next) next({ action, result });
+  const handleCallback = (next, action, result, context) => {
+    if (next) next({ action, result, context });
   };
 
   return (
@@ -112,7 +136,10 @@ function FirestoreProvider(props) {
 
 FirestoreProvider.propTypes = {
   firestore: PropTypes.object.isRequired,
-  children: PropTypes.element.isRequired
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element
+  ]).isRequired
 };
 
 export default FirestoreProvider;

@@ -43,7 +43,9 @@ function MockAuthenticator({
               return (
                 <Fragment>
                   <button onClick={signup}>Signup</button>
-                  <button onClick={login}>Login</button>
+                  <button onClick={() => login({}, { value: 'ima context' })}>
+                    Login
+                  </button>
                 </Fragment>
               );
             }

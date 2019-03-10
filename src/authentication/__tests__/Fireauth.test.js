@@ -48,7 +48,7 @@ describe('Firebase Authenticator', () => {
     const mockCalls = mockOnSuccess.mock.calls;
 
     expect(mockCalls.length).toBe(1);
-    expect(mockCalls[0][0].action).toBe('signup');
+    expect(mockCalls[0][0].action).toBe('signup-verify');
     expect(mockCalls[0][0].result).toContain(
       'Check your email for registration confirmation.'
     );
@@ -72,7 +72,7 @@ describe('Firebase Authenticator', () => {
     const mockCalls = mockOnSuccess.mock.calls;
 
     expect(mockCalls.length).toBe(1);
-    expect(mockCalls[0][0].action).toBe('signup');
+    expect(mockCalls[0][0].action).toBe('signup-no-verify');
     expect(mockCalls[0][0].result).toContain(
       'Thanks for signing up. Please login to continue.'
     );
@@ -115,7 +115,7 @@ describe('Firebase Authenticator', () => {
     const mockCalls = mockOnSuccess.mock.calls;
 
     expect(mockCalls.length).toBe(1);
-    expect(mockCalls[0][0].action).toBe('login');
+    expect(mockCalls[0][0].action).toBe('login-not-verified');
     expect(mockCalls[0][0].result).toContain(
       'Check your email for registration confirmation.'
     );
@@ -163,6 +163,7 @@ describe('Firebase Authenticator', () => {
 
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].action).toBe('login');
+    expect(mockCalls[0][0].context.value).toBe('ima context');
     expect(mockCalls[0][0].result).toContain(
       'You have successfully logged in.'
     );

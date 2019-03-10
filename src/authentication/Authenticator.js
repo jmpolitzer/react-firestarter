@@ -15,12 +15,12 @@ function Authenticator(props) {
     logout
   } = useContext(AuthContext);
 
-  const signupUser = values => {
-    signup(values, onSuccess, onError);
+  const signupUser = (values, context) => {
+    signup(values, context, onSuccess, onError);
   };
 
-  const loginUser = values => {
-    login(values, onSuccess, onError);
+  const loginUser = (values, context) => {
+    login(values, context, onSuccess, onError);
   };
 
   return children({

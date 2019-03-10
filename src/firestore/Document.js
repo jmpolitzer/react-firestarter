@@ -18,16 +18,16 @@ function Document(props) {
   const [isLoading, setIsLoading] = useState(false);
   const db = firestore;
 
-  const addDocument = values => {
-    add(collection, values, onSuccess, onError);
+  const addDocument = (values, context) => {
+    add(collection, values, context, onSuccess, onError);
   };
 
-  const removeDocument = () => {
-    remove(collection, id, onSuccess, onError);
+  const removeDocument = context => {
+    remove(collection, id, context, onSuccess, onError);
   };
 
-  const updateDocument = values => {
-    update(collection, id, values, onSuccess, onError);
+  const updateDocument = (values, context) => {
+    update(collection, id, values, context, onSuccess, onError);
   };
 
   useEffect(() => {

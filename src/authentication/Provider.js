@@ -25,7 +25,7 @@ function AuthProvider(props) {
     return fireauth.currentUser;
   };
 
-  const signup = async (values, onSuccess, onError) => {
+  const signup = async (values, context, onSuccess, onError) => {
     const { email, password } = values;
 
     setIsAuthenticating(true);
@@ -38,25 +38,27 @@ function AuthProvider(props) {
 
         handleCallback(
           onSuccess,
-          'signup',
-          'Check your email for registration confirmation.'
+          'signup-verify',
+          'Check your email for registration confirmation.',
+          context
         );
       } else {
         handleCallback(
           onSuccess,
-          'signup',
-          'Thanks for signing up. Please login to continue.'
+          'signup-no-verify',
+          'Thanks for signing up. Please login to continue.',
+          context
         );
       }
 
       setIsAuthenticating(false);
     } catch (error) {
       setIsAuthenticating(false);
-      handleCallback(onError, 'signup', error);
+      handleCallback(onError, 'signup', error, context);
     }
   };
 
-  const login = async (values, onSuccess, onError) => {
+  const login = async (values, context, onSuccess, onError) => {
     setIsAuthenticating(true);
 
     const { email, password } = values;
@@ -71,18 +73,24 @@ function AuthProvider(props) {
         setIsAuthenticated(true);
         setRedirectToReferrer(true);
         setIsAuthenticating(false);
-        handleCallback(onSuccess, 'login', 'You have successfully logged in.');
+        handleCallback(
+          onSuccess,
+          'login',
+          'You have successfully logged in.',
+          context
+        );
       } else {
         setIsAuthenticating(false);
         handleCallback(
           onSuccess,
-          'login',
-          'Check your email for registration confirmation.'
+          'login-not-verified',
+          'Check your email for registration confirmation.',
+          context
         );
       }
     } catch (error) {
       setIsAuthenticating(false);
-      handleCallback(onError, 'login', error);
+      handleCallback(onError, 'login', error, context);
     }
   };
 
@@ -93,8 +101,8 @@ function AuthProvider(props) {
     setRedirectToReferrer(false);
   };
 
-  const handleCallback = (next, action, result) => {
-    if (next) next({ action, result });
+  const handleCallback = (next, action, result, context) => {
+    if (next) next({ action, result, context });
   };
 
   useEffect(() => {
@@ -129,7 +137,7 @@ function AuthProvider(props) {
 
 AuthProvider.propTypes = {
   fireauth: PropTypes.object.isRequired,
-  children: PropTypes.object.isRequired,
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   verifyByEmail: PropTypes.bool
 };
 
