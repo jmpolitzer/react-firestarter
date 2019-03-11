@@ -25,7 +25,8 @@ function MockAuthenticator({
           signup,
           login,
           logout,
-          sendEmailVerification
+          sendEmailVerification,
+          sendPasswordResetEmail
         }) => {
           if (isAuthenticated) {
             return (
@@ -49,6 +50,11 @@ function MockAuthenticator({
                   </button>
                   <button onClick={sendEmailVerification}>
                     Send Email Verification
+                  </button>
+                  <button
+                    onClick={() => sendPasswordResetEmail('turd@ferguson.com')}
+                  >
+                    Reset Password
                   </button>
                 </Fragment>
               );

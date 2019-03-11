@@ -33,6 +33,7 @@ const mockFireauth = userType => {
     signInWithEmailAndPassword: () => Promise.resolve({ user: currentUser }),
     signOut: () => {},
     currentUser: currentUser,
+    sendPasswordResetEmail: () => Promise.resolve(),
     onAuthStateChanged: cb => {
       cb(userType === 'loggedIn' ? currentUser : null);
       return () => {};
@@ -45,6 +46,8 @@ const mockFireauthError = {
     Promise.reject(new Error('We had trouble signing you up.')),
   signInWithEmailAndPassword: () =>
     Promise.reject(new Error('We had trouble logging you in.')),
+  sendPasswordResetEmail: () =>
+    Promise.reject(new Error('We had trouble sending a password reset email.')),
   onAuthStateChanged: cb => {
     cb(null);
     return () => {};

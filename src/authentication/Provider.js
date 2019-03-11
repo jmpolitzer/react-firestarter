@@ -8,7 +8,6 @@ import AuthContext from './context';
     - update email address
     - update password
     - update user's profile
-    - send password reset email
     - reauthenticate user
     - reCaptcha for too many unsuccessful login attempts
 */
@@ -112,6 +111,21 @@ function AuthProvider(props) {
     }
   };
 
+  const sendPasswordResetEmail = async (email, context, onSuccess, onError) => {
+    try {
+      await fireauth.sendPasswordResetEmail(email);
+
+      handleCallback(
+        onSuccess,
+        'password-reset',
+        'Check your email to reset your password.',
+        context
+      );
+    } catch (error) {
+      handleCallback(onError, 'password-reset', error, context);
+    }
+  };
+
   const handleCallback = (next, action, result, context) => {
     if (next) next({ action, result, context });
   };
@@ -139,7 +153,8 @@ function AuthProvider(props) {
         signup,
         login,
         logout,
-        sendEmailVerification
+        sendEmailVerification,
+        sendPasswordResetEmail
       }}
     >
       {children}

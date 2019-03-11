@@ -286,4 +286,45 @@ describe('Firebase Authenticator', () => {
     expect(mockOnSuccessCalls.length).toBe(0);
     expect(mockOnErrorCalls.length).toBe(0);
   });
+
+  it('sends password reset email', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='verified'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Reset Password')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('password-reset');
+    expect(mockCalls[0][0].result).toContain(
+      'Check your email to reset your password.'
+    );
+  });
+
+  it('returns an error is there is a problem sending a password reset email', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='verified'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Reset Password')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('password-reset');
+    expect(mockCalls[0][0].result.message).toContain(
+      'We had trouble sending a password reset email.'
+    );
+  });
 });
