@@ -12,7 +12,8 @@ function Authenticator(props) {
     getCurrentUser,
     signup,
     login,
-    logout
+    logout,
+    sendEmailVerification
   } = useContext(AuthContext);
 
   const signupUser = (values, context) => {
@@ -23,6 +24,10 @@ function Authenticator(props) {
     login(values, context, onSuccess, onError);
   };
 
+  const sendEmailVerificationToUser = context => {
+    sendEmailVerification(context, onSuccess, onError);
+  };
+
   return children({
     isAuthenticated,
     isAuthenticating,
@@ -30,7 +35,8 @@ function Authenticator(props) {
     getCurrentUser,
     signup: signupUser,
     login: loginUser,
-    logout
+    logout,
+    sendEmailVerification: sendEmailVerificationToUser
   });
 }
 

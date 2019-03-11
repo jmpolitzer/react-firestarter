@@ -3,6 +3,15 @@ const mockUnverifiedCurrentUser = {
   sendEmailVerification: () => Promise.resolve(),
   emailVerified: false
 };
+const mockUnverifiedCurrentUserError = {
+  sendEmailVerification: () =>
+    Promise.reject(
+      new Error(
+        'There was a problem sending your email verification. Please try again.'
+      )
+    ),
+  emailVerified: false
+};
 const mockVerifiedCurrentUser = {
   emailVerified: true,
   email: 'turd@ferguson.com'
@@ -11,6 +20,7 @@ const mockVerifiedCurrentUser = {
 const types = {
   none: mockNoCurrentUser,
   unverified: mockUnverifiedCurrentUser,
+  unverifiedError: mockUnverifiedCurrentUserError,
   verified: mockVerifiedCurrentUser,
   loggedIn: mockVerifiedCurrentUser
 };

@@ -228,4 +228,62 @@ describe('Firebase Authenticator', () => {
 
     expect(getByText('Login')).toBeInTheDocument();
   });
+
+  it('sends an additional email verification if requested', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='unverified'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Send Email Verification')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('signup-verify');
+    expect(mockCalls[0][0].result).toContain(
+      'Check your email for registration confirmation.'
+    );
+  });
+
+  it('returns an error if there is a problem re-sending additional email verification', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='unverifiedError'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Send Email Verification')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('signup-verify');
+    expect(mockCalls[0][0].result.message).toContain(
+      'There was a problem sending your email verification. Please try again.'
+    );
+  });
+
+  it('will not try and re-send an email verificatin if currentUser does not exist', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='none'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Send Email Verification')));
+
+    const mockOnSuccessCalls = mockOnSuccess.mock.calls;
+    const mockOnErrorCalls = mockOnError.mock.calls;
+
+    expect(mockOnSuccessCalls.length).toBe(0);
+    expect(mockOnErrorCalls.length).toBe(0);
+  });
 });

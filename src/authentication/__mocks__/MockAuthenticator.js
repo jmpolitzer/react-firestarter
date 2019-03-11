@@ -24,7 +24,8 @@ function MockAuthenticator({
           getCurrentUser,
           signup,
           login,
-          logout
+          logout,
+          sendEmailVerification
         }) => {
           if (isAuthenticated) {
             return (
@@ -45,6 +46,9 @@ function MockAuthenticator({
                   <button onClick={signup}>Signup</button>
                   <button onClick={() => login({}, { value: 'ima context' })}>
                     Login
+                  </button>
+                  <button onClick={sendEmailVerification}>
+                    Send Email Verification
                   </button>
                 </Fragment>
               );

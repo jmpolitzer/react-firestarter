@@ -9,7 +9,6 @@ import AuthContext from './context';
     - update password
     - update user's profile
     - send password reset email
-    - resent email verification
     - reauthenticate user
     - reCaptcha for too many unsuccessful login attempts
 */
@@ -34,14 +33,7 @@ function AuthProvider(props) {
       await fireauth.createUserWithEmailAndPassword(email, password);
 
       if (verifyByEmail) {
-        await fireauth.currentUser.sendEmailVerification();
-
-        handleCallback(
-          onSuccess,
-          'signup-verify',
-          'Check your email for registration confirmation.',
-          context
-        );
+        sendEmailVerification(context, onSuccess, onError);
       } else {
         handleCallback(
           onSuccess,
@@ -101,6 +93,25 @@ function AuthProvider(props) {
     setRedirectToReferrer(false);
   };
 
+  const sendEmailVerification = async (context, onSuccess, onError) => {
+    const user = fireauth.currentUser;
+
+    if (user) {
+      try {
+        await user.sendEmailVerification();
+
+        handleCallback(
+          onSuccess,
+          'signup-verify',
+          'Check your email for registration confirmation.',
+          context
+        );
+      } catch (error) {
+        handleCallback(onError, 'signup-verify', error, context);
+      }
+    }
+  };
+
   const handleCallback = (next, action, result, context) => {
     if (next) next({ action, result, context });
   };
@@ -121,13 +132,14 @@ function AuthProvider(props) {
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: isAuthenticated,
-        isAuthenticating: isAuthenticating,
-        redirectToReferrer: redirectToReferrer,
-        getCurrentUser: getCurrentUser,
-        signup: signup,
-        login: login,
-        logout: logout
+        isAuthenticated,
+        isAuthenticating,
+        redirectToReferrer,
+        getCurrentUser,
+        signup,
+        login,
+        logout,
+        sendEmailVerification
       }}
     >
       {children}
