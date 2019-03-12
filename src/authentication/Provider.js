@@ -9,27 +9,60 @@ import AuthContext from './context';
     - update password
     - update user's profile
     - reauthenticate user
-    - reCaptcha for too many unsuccessful login attempts
+    - reCaptcha for too many unsuccessful login attempts\
+    - add authorization
 */
 
 function AuthProvider(props) {
-  const { fireauth, verifyByEmail = true, children } = props;
-
+  const { fireauth, verifyByEmail = true, mergeUser = false, children } = props;
+  const { firestore: db } = fireauth.app.firebase_;
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
   const getCurrentUser = () => {
-    return fireauth.currentUser;
+    const { currentUser } = fireauth;
+
+    if (mergeUser) {
+      const { uid } = currentUser;
+
+      db.collection('users')
+        .doc(uid)
+        .get()
+        .then(dbUser => {
+          return {
+            uid,
+            email: currentUser.email,
+            ...dbUser
+          };
+        })
+        .catch(error => {
+          return error;
+        });
+    } else {
+      return currentUser;
+    }
   };
 
   const signup = async (values, context, onSuccess, onError) => {
-    const { email, password } = values;
-
     setIsAuthenticating(true);
 
     try {
-      await fireauth.createUserWithEmailAndPassword(email, password);
+      const { password, ...user } = values;
+      const { email } = user;
+      const authUser = await fireauth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+
+      if (mergeUser) {
+        const { uid } = authUser.user;
+
+        await db
+          .collection('users')
+          .doc(uid)
+          .set(user);
+      }
 
       if (verifyByEmail) {
         sendEmailVerification(context, onSuccess, onError);
@@ -165,7 +198,8 @@ function AuthProvider(props) {
 AuthProvider.propTypes = {
   fireauth: PropTypes.object.isRequired,
   children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  verifyByEmail: PropTypes.bool
+  verifyByEmail: PropTypes.bool,
+  mergeUser: PropTypes.bool
 };
 
 export default AuthProvider;

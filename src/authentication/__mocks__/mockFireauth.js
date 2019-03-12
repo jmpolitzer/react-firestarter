@@ -37,6 +37,11 @@ const mockFireauth = userType => {
     onAuthStateChanged: cb => {
       cb(userType === 'loggedIn' ? currentUser : null);
       return () => {};
+    },
+    app: {
+      firebase_: {
+        firestore: {}
+      }
     }
   };
 };
@@ -51,6 +56,11 @@ const mockFireauthError = {
   onAuthStateChanged: cb => {
     cb(null);
     return () => {};
+  },
+  app: {
+    firebase_: {
+      firestore: {}
+    }
   }
 };
 
