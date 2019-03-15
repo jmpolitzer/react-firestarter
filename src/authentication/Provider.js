@@ -16,32 +16,38 @@ import AuthContext from './context';
 function AuthProvider(props) {
   const { fireauth, verifyByEmail = true, mergeUser = false, children } = props;
   const { firestore: db } = fireauth.app.firebase_;
+  const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
+  const createDbUser = async (authUser, values) => {
+    const { uid } = authUser;
+    const user = { uid, ...values };
+
+    await db
+      .collection('users')
+      .doc(uid)
+      .set(user)
+      .then(newDbUser => {
+        setCurrentUser(newDbUser);
+      });
+  };
+
+  const mergeDbUser = async authUser => {
+    const { uid } = authUser;
+
+    await db
+      .collection('users')
+      .doc(uid)
+      .get()
+      .then(dbUser => {
+        setCurrentUser(dbUser);
+      });
+  };
+
   const getCurrentUser = () => {
-    const { currentUser } = fireauth;
-
-    if (mergeUser) {
-      const { uid } = currentUser;
-
-      db.collection('users')
-        .doc(uid)
-        .get()
-        .then(dbUser => {
-          return {
-            uid,
-            email: currentUser.email,
-            ...dbUser
-          };
-        })
-        .catch(error => {
-          return error;
-        });
-    } else {
-      return currentUser;
-    }
+    return currentUser;
   };
 
   const signup = async (values, context, onSuccess, onError) => {
@@ -50,19 +56,13 @@ function AuthProvider(props) {
     try {
       const { password, ...user } = values;
       const { email } = user;
+
       const authUser = await fireauth.createUserWithEmailAndPassword(
         email,
         password
       );
 
-      if (mergeUser) {
-        const { uid } = authUser.user;
-
-        await db
-          .collection('users')
-          .doc(uid)
-          .set(user);
-      }
+      if (mergeUser) createDbUser(authUser, values, onError);
 
       if (verifyByEmail) {
         sendEmailVerification(context, onSuccess, onError);
@@ -168,6 +168,12 @@ function AuthProvider(props) {
       if (user && user.emailVerified) {
         setIsAuthenticated(true);
         setRedirectToReferrer(true);
+
+        if (mergeUser) {
+          mergeDbUser(user);
+        } else {
+          setCurrentUser(user);
+        }
       }
     });
 

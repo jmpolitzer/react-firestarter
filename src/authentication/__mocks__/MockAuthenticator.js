@@ -6,6 +6,7 @@ import { AuthProvider, Authenticator } from '../../index';
 
 function MockAuthenticator({
   userType,
+  mergeUser,
   verifyByEmail,
   onSuccess,
   onError,
@@ -14,6 +15,7 @@ function MockAuthenticator({
   return (
     <AuthProvider
       fireauth={error ? mockFireauthError : mockFireauth(userType)}
+      mergeUser={mergeUser}
       verifyByEmail={verifyByEmail}
     >
       <Authenticator onSuccess={onSuccess} onError={onError}>
@@ -31,7 +33,8 @@ function MockAuthenticator({
           if (isAuthenticated) {
             return (
               <Fragment>
-                <div>{getCurrentUser().email}</div>
+                <div>{getCurrentUser() && getCurrentUser().name}</div>
+                <div>{getCurrentUser() && getCurrentUser().email}</div>
                 <div>{`I should ${
                   !redirectToReferrer ? 'not ' : ''
                 }redirect to the referring url.`}</div>

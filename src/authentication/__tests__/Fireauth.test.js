@@ -78,6 +78,34 @@ describe('Firebase Authenticator', () => {
     );
   });
 
+  it('creates a separate user model on signup if mergeUser prop is true', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='unverified'
+        mergeUser={true}
+        verifyByEmail={false}
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    fireEvent.click(getByText('Signup'), {
+      name: 'Turd Ferguson',
+      favoriteColor: 'brown'
+    });
+
+    await waitForElement(() => getByText('Authenticating'));
+    await waitForElement(() => getByText('Signup'));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('signup-no-verify');
+    expect(mockCalls[0][0].result).toContain(
+      'Thanks for signing up. Please login to continue.'
+    );
+  });
+
   it('returns an error if there is a problem signing up', async () => {
     const { getByText } = render(
       <MockAuthenticator
@@ -132,6 +160,7 @@ describe('Firebase Authenticator', () => {
     );
 
     fireEvent.click(getByText('Login'));
+
     await waitForElement(() => getByText('Authenticating'));
     await waitForElement(() => getByText('Logout'));
 
@@ -157,6 +186,7 @@ describe('Firebase Authenticator', () => {
 
     await waitForElement(() => getByText('Authenticating'));
     await waitForElement(() => getByText('Logout'));
+
     getByText('I should redirect to the referring url.');
 
     const mockCalls = mockOnSuccess.mock.calls;
@@ -212,6 +242,21 @@ describe('Firebase Authenticator', () => {
     );
 
     expect(getByText('turd@ferguson.com')).toBeInTheDocument();
+    expect(getByText('Logout')).toBeInTheDocument();
+  });
+
+  it('fetches user model if mergeUser prop is true', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedIn'
+        mergeUser={true}
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await waitForElement(() => getByText('Turd Ferguson'));
+
     expect(getByText('Logout')).toBeInTheDocument();
   });
 
@@ -307,7 +352,7 @@ describe('Firebase Authenticator', () => {
     );
   });
 
-  it('returns an error is there is a problem sending a password reset email', async () => {
+  it('returns an error if there is a problem sending a password reset email', async () => {
     const { getByText } = render(
       <MockAuthenticator
         userType='verified'

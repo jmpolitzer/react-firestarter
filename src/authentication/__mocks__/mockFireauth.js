@@ -1,7 +1,8 @@
 const mockNoCurrentUser = null;
 const mockUnverifiedCurrentUser = {
   sendEmailVerification: () => Promise.resolve(),
-  emailVerified: false
+  emailVerified: false,
+  uid: 123456
 };
 const mockUnverifiedCurrentUserError = {
   sendEmailVerification: () =>
@@ -14,7 +15,10 @@ const mockUnverifiedCurrentUserError = {
 };
 const mockVerifiedCurrentUser = {
   emailVerified: true,
-  email: 'turd@ferguson.com'
+  email: 'turd@ferguson.com',
+  user: {
+    uid: 123456
+  }
 };
 
 const types = {
@@ -29,7 +33,7 @@ const mockFireauth = userType => {
   const currentUser = types[userType];
 
   return {
-    createUserWithEmailAndPassword: () => Promise.resolve(),
+    createUserWithEmailAndPassword: () => Promise.resolve(currentUser),
     signInWithEmailAndPassword: () => Promise.resolve({ user: currentUser }),
     signOut: () => {},
     currentUser: currentUser,
@@ -40,7 +44,19 @@ const mockFireauth = userType => {
     },
     app: {
       firebase_: {
-        firestore: {}
+        firestore: {
+          collection: collection => ({
+            doc: id => ({
+              set: user => Promise.resolve({ id: id, ...user }),
+              get: id =>
+                Promise.resolve({
+                  id: id,
+                  name: 'Turd Ferguson',
+                  ...currentUser
+                })
+            })
+          })
+        }
       }
     }
   };
