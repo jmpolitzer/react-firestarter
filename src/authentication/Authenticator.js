@@ -35,12 +35,12 @@ function Authenticator(props) {
     sendPasswordResetEmail(email, context, onSuccess, onError);
   };
 
-  const updateEmailForUser = (email, context) => {
-    updateEmail(email, context, onSuccess, onError);
+  const updateEmailForUser = (password, newEmail, context) => {
+    updateEmail(password, newEmail, context, onSuccess, onError);
   };
 
-  const updatePasswordForUser = (password, context) => {
-    updatePassword(password, context, onSuccess, onError);
+  const updatePasswordForUser = (password, newPassword, context) => {
+    updatePassword(password, newPassword, context, onSuccess, onError);
   };
 
   return children({

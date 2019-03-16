@@ -4,7 +4,6 @@ import AuthContext from './context';
 
 /*
   TODO:
-    - reauthenticate user
     - reCaptcha for too many unsuccessful login attempts
     - add authorization
 */
@@ -155,10 +154,17 @@ function AuthProvider(props) {
     }
   };
 
-  const updateEmail = async (newEmail, context, onSuccess, onError) => {
+  const updateEmail = async (
+    password,
+    newEmail,
+    context,
+    onSuccess,
+    onError
+  ) => {
     const user = fireauth.currentUser;
 
     try {
+      await reauthenticate(password);
       await user.updateEmail(newEmail);
 
       handleCallback(
@@ -172,10 +178,17 @@ function AuthProvider(props) {
     }
   };
 
-  const updatePassword = async (newPassword, context, onSuccess, onError) => {
+  const updatePassword = async (
+    password,
+    newPassword,
+    context,
+    onSuccess,
+    onError
+  ) => {
     const user = fireauth.currentUser;
 
     try {
+      await reauthenticate(password);
       await user.updatePassword(newPassword);
 
       handleCallback(
@@ -187,6 +200,17 @@ function AuthProvider(props) {
     } catch (error) {
       handleCallback(onError, 'update-password', error, context);
     }
+  };
+
+  const reauthenticate = password => {
+    const user = fireauth.currentUser;
+
+    return new Promise((resolve, reject) => {
+      user
+        .reauthenticateAndRetrieveDataWithCredential(user.email, password)
+        .then(() => resolve())
+        .catch(error => reject(error));
+    });
   };
 
   const handleCallback = (next, action, result, context) => {

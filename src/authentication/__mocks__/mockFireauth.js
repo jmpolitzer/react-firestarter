@@ -16,6 +16,7 @@ const mockUnverifiedCurrentUserError = {
 const mockVerifiedCurrentUser = {
   updateEmail: () => Promise.resolve(),
   updatePassword: () => Promise.resolve(),
+  reauthenticateAndRetrieveDataWithCredential: () => Promise.resolve(),
   emailVerified: true,
   email: 'turd@ferguson.com',
   user: {
@@ -27,6 +28,18 @@ const mockVerifiedCurrentUserError = {
     Promise.reject(new Error('There was a problem updating your email.')),
   updatePassword: () =>
     Promise.reject(new Error('There was a problem updating your password.')),
+  reauthenticateAndRetrieveDataWithCredential: () => Promise.resolve(),
+  emailVerified: true,
+  email: 'turd@ferguson.com',
+  user: {
+    uid: 123456
+  }
+};
+const mockVerifiedUnreauthenticatedCurrentUserError = {
+  reauthenticateAndRetrieveDataWithCredential: () =>
+    Promise.reject(
+      new Error('There was a problem reauthenticating the current user.')
+    ),
   emailVerified: true,
   email: 'turd@ferguson.com',
   user: {
@@ -40,7 +53,8 @@ const types = {
   unverifiedError: mockUnverifiedCurrentUserError,
   verified: mockVerifiedCurrentUser,
   loggedInError: mockVerifiedCurrentUserError,
-  loggedIn: mockVerifiedCurrentUser
+  loggedIn: mockVerifiedCurrentUser,
+  loggedInUnReauthenticatedError: mockVerifiedUnreauthenticatedCurrentUserError
 };
 
 const mockFireauth = userType => {
@@ -90,7 +104,11 @@ const mockFireauthError = userType => {
         new Error('We had trouble sending a password reset email.')
       ),
     onAuthStateChanged: cb => {
-      cb(userType === 'loggedInError' ? currentUser : null);
+      cb(
+        ['loggedInError', 'loggedInUnReauthenticatedError'].includes(userType)
+          ? currentUser
+          : null
+      );
       return () => {};
     },
     app: {

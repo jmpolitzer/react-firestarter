@@ -89,10 +89,7 @@ describe('Firebase Authenticator', () => {
       />
     );
 
-    fireEvent.click(getByText('Signup'), {
-      name: 'Turd Ferguson',
-      favoriteColor: 'brown'
-    });
+    fireEvent.click(getByText('Signup'));
 
     await waitForElement(() => getByText('Authenticating'));
     await waitForElement(() => getByText('Signup'));
@@ -383,6 +380,7 @@ describe('Firebase Authenticator', () => {
     );
 
     await wait(() => fireEvent.click(getByText('Update Email')));
+    await wait(() => {});
 
     const mockCalls = mockOnSuccess.mock.calls;
 
@@ -402,6 +400,7 @@ describe('Firebase Authenticator', () => {
     );
 
     await wait(() => fireEvent.click(getByText('Update Email')));
+    await wait(() => {});
 
     const mockCalls = mockOnError.mock.calls;
 
@@ -409,6 +408,28 @@ describe('Firebase Authenticator', () => {
     expect(mockCalls[0][0].action).toBe('update-email');
     expect(mockCalls[0][0].result.message).toContain(
       'There was a problem updating your email.'
+    );
+  });
+
+  it('returns an error if a user does not successfully reauthenticate before updating email', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedInUnReauthenticatedError'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Update Email')));
+    await wait(() => {});
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update-email');
+    expect(mockCalls[0][0].result.message).toContain(
+      'There was a problem reauthenticating the current user.'
     );
   });
 
@@ -422,6 +443,7 @@ describe('Firebase Authenticator', () => {
     );
 
     await wait(() => fireEvent.click(getByText('Update Password')));
+    await wait(() => {});
 
     const mockCalls = mockOnSuccess.mock.calls;
 
@@ -441,6 +463,7 @@ describe('Firebase Authenticator', () => {
     );
 
     await wait(() => fireEvent.click(getByText('Update Password')));
+    await wait(() => {});
 
     const mockCalls = mockOnError.mock.calls;
 
@@ -448,6 +471,28 @@ describe('Firebase Authenticator', () => {
     expect(mockCalls[0][0].action).toBe('update-password');
     expect(mockCalls[0][0].result.message).toContain(
       'There was a problem updating your password.'
+    );
+  });
+
+  it('returns an error if a user does not successfully reauthenticate before updating password', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedInUnReauthenticatedError'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Update Password')));
+    await wait(() => {});
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update-password');
+    expect(mockCalls[0][0].result.message).toContain(
+      'There was a problem reauthenticating the current user.'
     );
   });
 });
