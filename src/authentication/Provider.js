@@ -4,12 +4,8 @@ import AuthContext from './context';
 
 /*
   TODO:
-    - save user separately upon signup
-    - update email address
-    - update password
-    - update user's profile
     - reauthenticate user
-    - reCaptcha for too many unsuccessful login attempts\
+    - reCaptcha for too many unsuccessful login attempts
     - add authorization
 */
 
@@ -159,6 +155,40 @@ function AuthProvider(props) {
     }
   };
 
+  const updateEmail = async (newEmail, context, onSuccess, onError) => {
+    const user = fireauth.currentUser;
+
+    try {
+      await user.updateEmail(newEmail);
+
+      handleCallback(
+        onSuccess,
+        'update-email',
+        'Your email has been updated.',
+        context
+      );
+    } catch (error) {
+      handleCallback(onError, 'update-email', error, context);
+    }
+  };
+
+  const updatePassword = async (newPassword, context, onSuccess, onError) => {
+    const user = fireauth.currentUser;
+
+    try {
+      await user.updatePassword(newPassword);
+
+      handleCallback(
+        onSuccess,
+        'update-password',
+        'Your password has been updated.',
+        context
+      );
+    } catch (error) {
+      handleCallback(onError, 'update-password', error, context);
+    }
+  };
+
   const handleCallback = (next, action, result, context) => {
     if (next) next({ action, result, context });
   };
@@ -193,7 +223,9 @@ function AuthProvider(props) {
         login,
         logout,
         sendEmailVerification,
-        sendPasswordResetEmail
+        sendPasswordResetEmail,
+        updateEmail,
+        updatePassword
       }}
     >
       {children}

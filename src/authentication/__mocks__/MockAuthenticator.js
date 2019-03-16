@@ -14,7 +14,7 @@ function MockAuthenticator({
 }) {
   return (
     <AuthProvider
-      fireauth={error ? mockFireauthError : mockFireauth(userType)}
+      fireauth={error ? mockFireauthError(userType) : mockFireauth(userType)}
       mergeUser={mergeUser}
       verifyByEmail={verifyByEmail}
     >
@@ -28,7 +28,9 @@ function MockAuthenticator({
           login,
           logout,
           sendEmailVerification,
-          sendPasswordResetEmail
+          sendPasswordResetEmail,
+          updateEmail,
+          updatePassword
         }) => {
           if (isAuthenticated) {
             return (
@@ -39,6 +41,8 @@ function MockAuthenticator({
                   !redirectToReferrer ? 'not ' : ''
                 }redirect to the referring url.`}</div>
                 <button onClick={logout}>Logout</button>
+                <button onClick={updateEmail}>Update Email</button>
+                <button onClick={updatePassword}>Update Password</button>
               </Fragment>
             );
           } else {
@@ -54,9 +58,7 @@ function MockAuthenticator({
                   <button onClick={sendEmailVerification}>
                     Send Email Verification
                   </button>
-                  <button
-                    onClick={() => sendPasswordResetEmail('turd@ferguson.com')}
-                  >
+                  <button onClick={() => sendPasswordResetEmail()}>
                     Reset Password
                   </button>
                 </Fragment>

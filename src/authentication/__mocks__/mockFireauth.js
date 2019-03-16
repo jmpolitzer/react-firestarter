@@ -14,6 +14,19 @@ const mockUnverifiedCurrentUserError = {
   emailVerified: false
 };
 const mockVerifiedCurrentUser = {
+  updateEmail: () => Promise.resolve(),
+  updatePassword: () => Promise.resolve(),
+  emailVerified: true,
+  email: 'turd@ferguson.com',
+  user: {
+    uid: 123456
+  }
+};
+const mockVerifiedCurrentUserError = {
+  updateEmail: () =>
+    Promise.reject(new Error('There was a problem updating your email.')),
+  updatePassword: () =>
+    Promise.reject(new Error('There was a problem updating your password.')),
   emailVerified: true,
   email: 'turd@ferguson.com',
   user: {
@@ -26,6 +39,7 @@ const types = {
   unverified: mockUnverifiedCurrentUser,
   unverifiedError: mockUnverifiedCurrentUserError,
   verified: mockVerifiedCurrentUser,
+  loggedInError: mockVerifiedCurrentUserError,
   loggedIn: mockVerifiedCurrentUser
 };
 
@@ -62,22 +76,29 @@ const mockFireauth = userType => {
   };
 };
 
-const mockFireauthError = {
-  createUserWithEmailAndPassword: () =>
-    Promise.reject(new Error('We had trouble signing you up.')),
-  signInWithEmailAndPassword: () =>
-    Promise.reject(new Error('We had trouble logging you in.')),
-  sendPasswordResetEmail: () =>
-    Promise.reject(new Error('We had trouble sending a password reset email.')),
-  onAuthStateChanged: cb => {
-    cb(null);
-    return () => {};
-  },
-  app: {
-    firebase_: {
-      firestore: {}
+const mockFireauthError = userType => {
+  const currentUser = types[userType];
+
+  return {
+    createUserWithEmailAndPassword: () =>
+      Promise.reject(new Error('We had trouble signing you up.')),
+    signInWithEmailAndPassword: () =>
+      Promise.reject(new Error('We had trouble logging you in.')),
+    currentUser: currentUser,
+    sendPasswordResetEmail: () =>
+      Promise.reject(
+        new Error('We had trouble sending a password reset email.')
+      ),
+    onAuthStateChanged: cb => {
+      cb(userType === 'loggedInError' ? currentUser : null);
+      return () => {};
+    },
+    app: {
+      firebase_: {
+        firestore: {}
+      }
     }
-  }
+  };
 };
 
 export { mockFireauth, mockFireauthError };

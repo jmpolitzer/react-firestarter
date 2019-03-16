@@ -372,4 +372,82 @@ describe('Firebase Authenticator', () => {
       'We had trouble sending a password reset email.'
     );
   });
+
+  it('updates email', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedIn'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Update Email')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update-email');
+    expect(mockCalls[0][0].result).toContain('Your email has been updated.');
+  });
+
+  it('returns an error if there is a problem updating email', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedInError'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Update Email')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update-email');
+    expect(mockCalls[0][0].result.message).toContain(
+      'There was a problem updating your email.'
+    );
+  });
+
+  it('updates password', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedIn'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Update Password')));
+
+    const mockCalls = mockOnSuccess.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update-password');
+    expect(mockCalls[0][0].result).toContain('Your password has been updated.');
+  });
+
+  it('returns an error if there is a problem updating password', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedInError'
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+        error
+      />
+    );
+
+    await wait(() => fireEvent.click(getByText('Update Password')));
+
+    const mockCalls = mockOnError.mock.calls;
+
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].action).toBe('update-password');
+    expect(mockCalls[0][0].result.message).toContain(
+      'There was a problem updating your password.'
+    );
+  });
 });
