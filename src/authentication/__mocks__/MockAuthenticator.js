@@ -51,7 +51,7 @@ function MockAuthenticator({
             } else {
               return (
                 <Fragment>
-                  <button onClick={signup}>Signup</button>
+                  <button onClick={() => signup({})}>Signup</button>
                   <button onClick={() => login({}, { value: 'ima context' })}>
                     Login
                   </button>
