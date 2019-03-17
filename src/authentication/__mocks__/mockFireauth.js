@@ -72,7 +72,7 @@ const mockFireauth = userType => {
     },
     app: {
       firebase_: {
-        firestore: {
+        firestore: () => ({
           collection: collection => ({
             doc: id => ({
               set: user => Promise.resolve({ id: id, ...user }),
@@ -84,7 +84,7 @@ const mockFireauth = userType => {
                 })
             })
           })
-        }
+        })
       }
     }
   };
@@ -113,7 +113,7 @@ const mockFireauthError = userType => {
     },
     app: {
       firebase_: {
-        firestore: {}
+        firestore: () => {}
       }
     }
   };

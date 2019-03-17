@@ -6,7 +6,7 @@ function AuthProvider(props) {
   const { fireauth, verifyByEmail = true, mergeUser = false, children } = props;
   const db = fireauth.app.firebase_.firestore();
   const [currentUser, setCurrentUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('firebaseUserIsAuthenticated'));
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
@@ -81,8 +81,6 @@ function AuthProvider(props) {
       );
 
       if (user.emailVerified || (user && !verifyByEmail)) {
-        setIsAuthenticated(true);
-        setRedirectToReferrer(true);
         setIsAuthenticating(false);
         handleCallback(
           onSuccess,
@@ -118,6 +116,8 @@ function AuthProvider(props) {
     if (user) {
       try {
         await user.sendEmailVerification();
+
+        logout(); /* Calling logout here allows onAuthStateChanged to be called on the first login. */
 
         handleCallback(
           onSuccess,
@@ -212,6 +212,7 @@ function AuthProvider(props) {
   useEffect(() => {
     const unsubscribe = fireauth.onAuthStateChanged(user => {
       if (user && user.emailVerified) {
+        localStorage.setItem('firebaseUserIsAuthenticated', true);
         setIsAuthenticated(true);
         setRedirectToReferrer(true);
 
@@ -224,6 +225,7 @@ function AuthProvider(props) {
     });
 
     return function cleanup() {
+      localStorage.removeItem('firebaseUserIsAuthenticated', true);
       unsubscribe();
     };
   }, []);
@@ -235,7 +237,6 @@ function AuthProvider(props) {
         isAuthenticating,
         redirectToReferrer,
         getCurrentUser,
-        currentUser,
         signup,
         login,
         logout,

@@ -52,7 +52,6 @@ function Authenticator(props) {
     isAuthenticating,
     redirectToReferrer,
     getCurrentUser,
-    currentUser,
     signup: signupUser,
     login: loginUser,
     logout,
