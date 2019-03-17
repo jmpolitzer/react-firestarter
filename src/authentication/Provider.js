@@ -2,31 +2,22 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import AuthContext from './context';
 
-/*
-  TODO:
-    - reCaptcha for too many unsuccessful login attempts
-    - add authorization
-*/
-
 function AuthProvider(props) {
   const { fireauth, verifyByEmail = true, mergeUser = false, children } = props;
-  const { firestore: db } = fireauth.app.firebase_;
+  const db = fireauth.app.firebase_.firestore();
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
   const createDbUser = async (authUser, values) => {
-    const { uid } = authUser;
-    const user = { uid, ...values };
+    const { user: { uid, email } } = authUser;
+    const user = { uid, email, ...values };
 
     await db
       .collection('users')
       .doc(uid)
-      .set(user)
-      .then(newDbUser => {
-        setCurrentUser(newDbUser);
-      });
+      .set(user);
   };
 
   const mergeDbUser = async authUser => {
@@ -37,7 +28,9 @@ function AuthProvider(props) {
       .doc(uid)
       .get()
       .then(dbUser => {
-        setCurrentUser(dbUser);
+        if (dbUser.exists) {
+          setCurrentUser(dbUser.data());
+        }
       });
   };
 
@@ -45,19 +38,18 @@ function AuthProvider(props) {
     return currentUser;
   };
 
-  const signup = async (values, context, onSuccess, onError) => {
+  const signup = async (credential, user, context, onSuccess, onError) => {
     setIsAuthenticating(true);
 
     try {
-      const { password, ...user } = values;
-      const { email } = user;
+      const { email, password } = credential;
 
       const authUser = await fireauth.createUserWithEmailAndPassword(
         email,
         password
       );
 
-      if (mergeUser) createDbUser(authUser, values, onError);
+      if (mergeUser) createDbUser(authUser, user, onError);
 
       if (verifyByEmail) {
         sendEmailVerification(context, onSuccess, onError);
@@ -243,6 +235,7 @@ function AuthProvider(props) {
         isAuthenticating,
         redirectToReferrer,
         getCurrentUser,
+        currentUser,
         signup,
         login,
         logout,

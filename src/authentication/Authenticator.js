@@ -10,6 +10,7 @@ function Authenticator(props) {
     isAuthenticating,
     redirectToReferrer,
     getCurrentUser,
+    currentUser,
     signup,
     login,
     logout,
@@ -20,7 +21,10 @@ function Authenticator(props) {
   } = useContext(AuthContext);
 
   const signupUser = (values, context) => {
-    signup(values, context, onSuccess, onError);
+    const { email, password, ...user } = values;
+    const credential = { email, password };
+
+    signup(credential, user, context, onSuccess, onError);
   };
 
   const loginUser = (values, context) => {
@@ -48,6 +52,7 @@ function Authenticator(props) {
     isAuthenticating,
     redirectToReferrer,
     getCurrentUser,
+    currentUser,
     signup: signupUser,
     login: loginUser,
     logout,
