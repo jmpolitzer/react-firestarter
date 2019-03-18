@@ -158,8 +158,7 @@ describe('Firebase Authenticator', () => {
 
     fireEvent.click(getByText('Login'));
 
-    await waitForElement(() => getByText('Authenticating'));
-    await waitForElement(() => getByText('Logout'));
+    await wait(() => {});
 
     const mockCalls = mockOnSuccess.mock.calls;
 
@@ -181,10 +180,7 @@ describe('Firebase Authenticator', () => {
 
     fireEvent.click(getByText('Login'));
 
-    await waitForElement(() => getByText('Authenticating'));
-    await waitForElement(() => getByText('Logout'));
-
-    getByText('I should redirect to the referring url.');
+    await wait(() => {});
 
     const mockCalls = mockOnSuccess.mock.calls;
 
@@ -253,6 +249,26 @@ describe('Firebase Authenticator', () => {
     );
 
     await waitForElement(() => getByText('Turd Ferguson'));
+
+    expect(getByText('turd@ferguson.com')).toBeInTheDocument();
+    expect(
+      getByText('I should redirect to the referring url.')
+    ).toBeInTheDocument();
+    expect(getByText('Logout')).toBeInTheDocument();
+  });
+
+  it('returns authUser instead of user model if mergeUser prop is true and user model does not exist', async () => {
+    const { getByText } = render(
+      <MockAuthenticator
+        userType='loggedInNoDb'
+        mergeUser={true}
+        verifyByEmail={false}
+        onSuccess={mockOnSuccess}
+        onError={mockOnError}
+      />
+    );
+
+    await waitForElement(() => getByText('ed.bob.cunningham@wut.com'));
 
     expect(getByText('Logout')).toBeInTheDocument();
   });
