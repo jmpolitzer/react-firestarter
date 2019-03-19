@@ -112,6 +112,7 @@ function AuthProvider(props) {
   const logout = () => {
     fireauth.signOut();
 
+    localStorage.removeItem('react-firestarter-authenticated');
     setIsAuthenticated(false);
     setRedirectToReferrer(false);
   };
@@ -138,9 +139,12 @@ function AuthProvider(props) {
   };
 
   const sendPasswordResetEmail = async (email, context, onSuccess, onError) => {
+    setIsAuthenticating(true);
+
     try {
       await fireauth.sendPasswordResetEmail(email);
 
+      setIsAuthenticating(false);
       handleCallback(
         onSuccess,
         'password-reset',
@@ -148,6 +152,7 @@ function AuthProvider(props) {
         context
       );
     } catch (error) {
+      setIsAuthenticating(false);
       handleCallback(onError, 'password-reset', error, context);
     }
   };

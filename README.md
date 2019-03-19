@@ -89,71 +89,71 @@ function Firestore() {
 
 ### AuthProvider
 
-| Name          |  Type  | Default  | Description                                                                           |
-| ------------- | :----: | :------: | ------------------------------------------------------------------------------------- |
+| Name            |  Type  | Default  | Description                                                                           |
+| --------------- | :----: | :------: | ------------------------------------------------------------------------------------- |
 | `fireauth`      | object | required | your own initialized firebase authentication module                                   |
 | `verifyByEmail` |  bool  |   true   | if true, users will be required to verify their identity through an email upon signup |
 
 ### Authenticator
 
-| Name      | Type | Default | Description                                      |
-| --------- | :--: | :-----: | ------------------------------------------------ |
+| Name        | Type | Default | Description                             |
+| ----------- | :--: | :-----: | --------------------------------------- |
 | `onSuccess` | func |         | callback for successful login or signup |
 | `onError`   | func |         | callback for failed login or signup     |
 
 An instantiated `Authenticator` will receive the following:
 
-| Name               | Type | Description                                                                                              |
-| ------------------ | :--: | -------------------------------------------------------------------------------------------------------- |
-| `isAuthenticated`    | bool | lets us know if we have an authenticated user                                                            |
-| `isAuthenticating`   | bool | lets us know if a user is in the process of authenticating                                               |
-| `redirectToReferrer` | bool | useful for redirecting an authenticated user to original route they landed upon                          |
-| `getCurrentUser`     | func | returns our authenticated user                                                                           |
-| `signup`             | func | signs a user up; will send a verification email unless `verifyByEmail` is set to false in `AuthProvider`; takes two arguments - the first is the user to signup, and the second is a context argument which will be returned to the callback method  |
-| `login`              | func | logs a user in; will not succeed if the user has not and should verify their identity via email; takes two arguments - the first is the user to login, and the second is a context argument which will be returned to the callback method          |
-| `logout`             | func | logs a user out                                                                                          |
+| Name                 | Type | Description                                                                                                                                                                                                                                         |
+| -------------------- | :--: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isAuthenticated`    | bool | lets us know if we have an authenticated user                                                                                                                                                                                                       |
+| `isAuthenticating`   | bool | lets us know if a user is in the process of authenticating                                                                                                                                                                                          |
+| `redirectToReferrer` | bool | useful for redirecting an authenticated user to original route they landed upon                                                                                                                                                                     |
+| `getCurrentUser`     | func | returns our authenticated user                                                                                                                                                                                                                      |
+| `signup`             | func | signs a user up; will send a verification email unless `verifyByEmail` is set to false in `AuthProvider`; takes two arguments - the first is the user to signup, and the second is a context argument which will be returned to the callback method |
+| `login`              | func | logs a user in; will not succeed if the user has not and should verify their identity via email; takes two arguments - the first is the user to login, and the second is a context argument which will be returned to the callback method           |
+| `logout`             | func | logs a user out                                                                                                                                                                                                                                     |
 
 ### FirestoreProvider
 
-| Name      |  Type  | Default  | Description                                    |
-| --------- | :----: | :------: | ---------------------------------------------- |
+| Name        |  Type  | Default  | Description                                    |
+| ----------- | :----: | :------: | ---------------------------------------------- |
 | `firestore` | object | required | your own initialized firebase firestore module |
 
 ### Collection
 
-| Name     |  Type  | Default  | Description                                                                                     |
-| -------- | :----: | :------: | ----------------------------------------------------------------------------------------------- |
-| `name`     | string | required | name of the firestore collection                                                                |
+| Name       |  Type  | Default  | Description                                 |
+| ---------- | :----: | :------: | ------------------------------------------- |
+| `name`     | string | required | name of the firestore collection            |
 | `onError`  |  func  |          | callback for successful fetch of collection |
-| `realtime` |  bool  |   true   | listen for realtime snapshot updates                                                            |
+| `realtime` |  bool  |   true   | listen for realtime snapshot updates        |
 
 An instantiated `Collection` will receive the following:
 
 | Name               | Type  | Description                                                                                                                                   |
 | ------------------ | :---: | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isLoading`          | bool  | lets us know if our document collection is in the process of loading                                                                          |
+| `isLoading`        | bool  | lets us know if our document collection is in the process of loading                                                                          |
 | `[collectionName]` | array | collection of documents; contains an id and the result of `doc.data()`; the prop name is the same as the `name` prop passed into `Collection` |
 
 ### Document
 
-| Name       |  Type  | Default  | Description                                                                               |
-| ---------- | :----: | :------: | ----------------------------------------------------------------------------------------- |
-| `collection` | string | required | name of the firestore collection the document belongs to                                  |
-| `id`         |  any   |          | id of the document; required for all methods except `add`                                 |
-| `onSuccess`  |  func  |          | callback for successful execution of `add`, `remove`, `update`                   |
+| Name         |  Type  | Default  | Description                                                                        |
+| ------------ | :----: | :------: | ---------------------------------------------------------------------------------- |
+| `collection` | string | required | name of the firestore collection the document belongs to                           |
+| `id`         |  any   |          | id of the document; required for all methods except `add`                          |
+| `onSuccess`  |  func  |          | callback for successful execution of `add`, `remove`, `update`                     |
 | `onError`    |  func  |          | callback for failed execution of `add`, `remove`, `update`, and non-realtime fetch |
-| `realtime`   |  bool  |  false   | listen for realtime snapshot updates                                                      |
-| `fetch`      |  bool  |  false   | get a document or listen for realtime snapshot updates                                    |
+| `realtime`   |  bool  |  false   | listen for realtime snapshot updates                                               |
+| `fetch`      |  bool  |  false   | get a document or listen for realtime snapshot updates                             |
 
 An instantiated `Document` will receive the following:
 
-| Name      |  Type  | Description                                                   |
-| --------- | :----: | ------------------------------------------------------------- |
-| `add`       |  func  | adds a document; takes two arguments - the first is the item to add, and the second is a context argument which will be returned to the callback method                                                |
-| `remove`    |  func  | removes a document; takes one argument - a context which will be returned to the callback method                                             |
-| `update`    |  func  | updates a document; takes two arguments - the first is the date to update, and the second is a context argument which will be returned to the callback method                                             |
-| `doc`       | object | a single document object; contains the result of `doc.data()` |
-| `isLoading` |  bool  | lets us know if our document is in the process of loading     |
+| Name        |  Type  | Description                                                                                                                                                   |
+| ----------- | :----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add`       |  func  | adds a document; takes two arguments - the first is the item to add, and the second is a context argument which will be returned to the callback method       |
+| `remove`    |  func  | removes a document; takes one argument - a context which will be returned to the callback method                                                              |
+| `update`    |  func  | updates a document; takes two arguments - the first is the data to update, and the second is a context argument which will be returned to the callback method |
+| `doc`       | object | a single document object; contains the result of `doc.data()`                                                                                                 |
+| `isLoading` |  bool  | lets us know if our document is in the process of loading                                                                                                     |
 
 ## License
 
