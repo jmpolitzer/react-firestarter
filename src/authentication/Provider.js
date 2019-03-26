@@ -158,8 +158,8 @@ function AuthProvider(props) {
   };
 
   const updateEmail = async (
-    password,
     newEmail,
+    password,
     context,
     onSuccess,
     onError
@@ -170,10 +170,14 @@ function AuthProvider(props) {
       await reauthenticate(password);
       await user.updateEmail(newEmail);
 
+      if (verifyByEmail) sendEmailVerification(context, onSuccess, onError);
+
+      logout();
+
       handleCallback(
         onSuccess,
         'update-email',
-        'Your email has been updated.',
+        `Your email has been updated. Please ${verifyByEmail && 'check your email to verify this update and'} login to continue.`,
         context
       );
     } catch (error) {
@@ -207,10 +211,13 @@ function AuthProvider(props) {
 
   const reauthenticate = password => {
     const user = fireauth.currentUser;
+    const { email } = user;
+    const getCredential = fireauth.app.firebase_.auth.EmailAuthProvider.credential;
+    const credential = getCredential(email, password);
 
     return new Promise((resolve, reject) => {
       user
-        .reauthenticateAndRetrieveDataWithCredential(user.email, password)
+        .reauthenticateAndRetrieveDataWithCredential(credential)
         .then(() => resolve())
         .catch(error => reject(error));
     });
